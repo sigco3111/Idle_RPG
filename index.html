@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방치형 모험가 노트</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif; 
+      overflow-x: hidden; 
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #2d3748; }
+    ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #718096; }
+
+    .dice-roll-display { transition: opacity 0.3s ease-out, transform 0.3s ease-out; opacity: 0; transform: translateY(-20px) scale(0.95); }
+    .dice-roll-display.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    .floating-text-effect { position: absolute; animation: floatAndFade 1.5s ease-out forwards; font-weight: bold; padding: 3px 8px; border-radius: 6px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; white-space: nowrap; font-size: 0.9rem; }
+    @keyframes floatAndFade { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 20% { transform: translateY(-10px) scale(1); opacity: 1; } 100% { transform: translateY(-70px) scale(1.1); opacity: 0; } }
+    .floating-text-damage { color: white; background-color: rgba(220, 38, 38, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
+    .floating-text-crit { color: black; background-color: rgba(250, 204, 21, 0.85); border: 1px solid rgba(255,255,255,0.5); } 
+    .floating-text-miss { color: white; background-color: rgba(100, 116, 139, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
+    .floating-text-heal { color: white; background-color: rgba(22, 163, 74, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
+    .floating-text-ko { color: white; background-color: rgba(75,85,99,0.8); font-weight: bold; padding: 5px 10px; font-size:1rem;}
+
+    /* Equipment Modal Styles */
+    .equipment-modal-overlay {
+      /* Tailwind handles this with fixed inset-0 bg-black/70 backdrop-blur-sm */
+    }
+    .equipment-modal-content {
+      /* Tailwind handles this with bg-slate-800 p-6 rounded-lg etc. */
+      max-height: 90vh; /* Ensure modal doesn't overflow viewport height */
+    }
+
+    /* Inventory Item hover/active states - Tailwind focus and ring utilities used instead */
+    .inventory-item {
+      /* transition: transform 0.1s ease-out, box-shadow 0.1s ease-out; */
+    }
+    /* .inventory-item:hover { transform: scale(1.05); } */
+    /* .inventory-item.selected { box-shadow: 0 0 10px theme('colors.amber.400'); border-color: theme('colors.amber.400');} */
+
+    /* Rarity Border Colors (example - handled by getRarityColorClass in JS) */
+    /* .border-common { border-color: #94a3b8; } slate-400 */
+    /* .border-uncommon { border-color: #4ade80; } green-400 */
+    /* .border-rare { border-color: #38bdf8; } sky-400 */
+    /* .border-epic { border-color: #a78bfa; } violet-400 */
+
+    /* Custom scrollbar for specific elements if needed */
+    .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #4b5563; border-radius: 3px; } /* gray-600 */
+    .scrollbar-thin::-webkit-scrollbar-track { background-color: #374151; } /* gray-700 */
+
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "uuid": "https://esm.sh/uuid@^11.1.0"
+  }
+}
+</script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
+<link rel="stylesheet" href="index.css">
+<script src="index.tsx" type="module"></script>
