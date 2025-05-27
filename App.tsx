@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PlayerParty, PartyMember, EnemyStats, GameLogMessage, UpgradeType, EffectiveMemberStats, DiceRollDisplayInfo, FloatingTextInstance, EquipmentItem, EquipmentSlot, EquipmentModalState, CharacterClassName, EquipmentRarity } from './types';
 import { 
@@ -19,7 +18,7 @@ import EquipmentModal from './components/EquipmentModal';
 import { generateNewEnemy, generateBossForStage } from './services/enemyService';
 import { getLootDrop } from './services/lootService';
 import { formatNumber } from './utils/formatters';
-import { NextStageIcon, SaveIcon } from './components/Icons';
+import { NextStageIcon, PreviousStageIcon, SaveIcon } from './components/Icons';
 import { rollD20, rollDice, parseDiceString } from './utils/diceRoller';
 import { getEquipmentEffectValue, getEquipmentDamageDice, isItemEquippable, getSlotDisplayName } from './utils/equipmentUtils';
 import { v4 as uuidv4 } from 'uuid';
@@ -39,7 +38,7 @@ const App = (): React.ReactNode => {
   const [lastHealTime, setLastHealTime] = useState<number>(0);
   const [isAutoUpgradeEnabled, setIsAutoUpgradeEnabled] = useState<boolean>(true);
   const [isAutoStageProgressionEnabled, setIsAutoStageProgressionEnabled] = useState<boolean>(true);
-  const [isAutoEquipEnabled, setIsAutoEquipEnabled] = useState<boolean>(true); // New state for auto-equip
+  const [isAutoEquipEnabled, setIsAutoEquipEnabled] = useState<boolean>(true); 
   const [isPartyWiped, setIsPartyWiped] = useState<boolean>(false);
   const [battlesUntilBoss, setBattlesUntilBoss] = useState<number>(BOSS_BATTLE_THRESHOLD);
   const [isBossBattleActive, setIsBossBattleActive] = useState<boolean>(false);
@@ -61,7 +60,7 @@ const App = (): React.ReactNode => {
   const isStageBossDefeatedRef = useRef(isStageBossDefeated);
   const isAutoUpgradeEnabledRef = useRef(isAutoUpgradeEnabled);
   const isAutoStageProgressionEnabledRef = useRef(isAutoStageProgressionEnabled);
-  const isAutoEquipEnabledRef = useRef(isAutoEquipEnabled); // Ref for auto-equip
+  const isAutoEquipEnabledRef = useRef(isAutoEquipEnabled); 
   const isPartyWipedRef = useRef(isPartyWiped);
   const canStartNewGamePlusRef = useRef(canStartNewGamePlus);
 
@@ -73,7 +72,7 @@ const App = (): React.ReactNode => {
   useEffect(() => { isStageBossDefeatedRef.current = isStageBossDefeated; }, [isStageBossDefeated]);
   useEffect(() => { isAutoUpgradeEnabledRef.current = isAutoUpgradeEnabled; }, [isAutoUpgradeEnabled]);
   useEffect(() => { isAutoStageProgressionEnabledRef.current = isAutoStageProgressionEnabled; }, [isAutoStageProgressionEnabled]);
-  useEffect(() => { isAutoEquipEnabledRef.current = isAutoEquipEnabled; }, [isAutoEquipEnabled]); // Effect for auto-equip
+  useEffect(() => { isAutoEquipEnabledRef.current = isAutoEquipEnabled; }, [isAutoEquipEnabled]); 
   useEffect(() => { isPartyWipedRef.current = isPartyWiped; }, [isPartyWiped]);
   useEffect(() => { canStartNewGamePlusRef.current = canStartNewGamePlus; }, [canStartNewGamePlus]);
 
@@ -222,7 +221,7 @@ const App = (): React.ReactNode => {
             setCanStartNewGamePlus(parsedData.canStartNewGamePlus || false); 
             setIsAutoUpgradeEnabled(parsedData.isAutoUpgradeEnabled !== undefined ? parsedData.isAutoUpgradeEnabled : true);
             setIsAutoStageProgressionEnabled(parsedData.isAutoStageProgressionEnabled !== undefined ? parsedData.isAutoStageProgressionEnabled : true);
-            setIsAutoEquipEnabled(parsedData.isAutoEquipEnabled !== undefined ? parsedData.isAutoEquipEnabled : true); // Load auto-equip
+            setIsAutoEquipEnabled(parsedData.isAutoEquipEnabled !== undefined ? parsedData.isAutoEquipEnabled : true); 
 
             if (parsedData.canStartNewGamePlus) { 
                 initialEnemyToSpawn = null;
@@ -251,7 +250,7 @@ const App = (): React.ReactNode => {
 
   const saveGameState = useCallback(() => {
     try {
-      const gameState = { playerParty: playerPartyRef.current, currentStage: currentStageRef.current, battlesUntilBoss: battlesUntilBossRef.current, isBossBattleActive: isBossBattleActiveRef.current, isStageBossDefeated: isStageBossDefeatedRef.current, canStartNewGamePlus: canStartNewGamePlusRef.current, isAutoUpgradeEnabled: isAutoUpgradeEnabledRef.current, isAutoStageProgressionEnabled: isAutoStageProgressionEnabledRef.current, isAutoEquipEnabled: isAutoEquipEnabledRef.current }; // Save auto-equip
+      const gameState = { playerParty: playerPartyRef.current, currentStage: currentStageRef.current, battlesUntilBoss: battlesUntilBossRef.current, isBossBattleActive: isBossBattleActiveRef.current, isStageBossDefeated: isStageBossDefeatedRef.current, canStartNewGamePlus: canStartNewGamePlusRef.current, isAutoUpgradeEnabled: isAutoUpgradeEnabledRef.current, isAutoStageProgressionEnabled: isAutoStageProgressionEnabledRef.current, isAutoEquipEnabled: isAutoEquipEnabledRef.current }; 
       localStorage.setItem(IDLE_RPG_SAVE_KEY, JSON.stringify(gameState));
       addLogMessage('게임이 자동 저장되었습니다.', 'save');
     } catch (error) { console.error('게임 저장 실패:', error); addLogMessage('게임 저장에 실패했습니다.', 'error'); }
@@ -327,7 +326,29 @@ const App = (): React.ReactNode => {
     const newEnemy = generateNewEnemy(newStage, playerPartyRef.current.ngPlusLevel); 
     setCurrentEnemy(newEnemy); 
     addLogMessage(`${newEnemy.name} 등장!`, 'system');
-  }, [addLogMessage, getEffectiveMemberStats]);
+    saveGameState();
+  }, [addLogMessage, getEffectiveMemberStats, saveGameState]);
+
+  const handlePreviousStage = useCallback(() => {
+    if (currentStageRef.current <= 1) { addLogMessage("이미 첫 번째 스테이지입니다.", "system"); return; }
+    if (canStartNewGamePlusRef.current) { addLogMessage("다음 회차를 시작해야 합니다.", "system"); return; }
+    if (isPartyWipedRef.current) { addLogMessage("파티가 전멸 상태입니다. 이전 스테이지로 이동할 수 없습니다.", "error"); return; }
+    const activeMembers = playerPartyRef.current.members.filter(m => m.isUnlocked && m.isActiveInCombat);
+    if (activeMembers.length === 0) { addLogMessage("활동 가능한 파티원이 없습니다. 이전 스테이지로 이동할 수 없습니다.", "error"); return; }
+
+    const newStage = currentStageRef.current - 1;
+    setCurrentStage(newStage);
+    addLogMessage(`스테이지 ${newStage}(으)로 이동합니다.`, 'system');
+    setPlayerParty(prevParty => ({ ...prevParty, members: prevParty.members.map(m => { if (m.isUnlocked) { const effectiveStats = getEffectiveMemberStats(m, prevParty); return { ...m, isActiveInCombat: true, currentHealth: effectiveStats.maxHealth, lastAttackTime: 0 }; } return m; }) }));
+    setIsStageBossDefeated(true); // Player is returning to an already cleared stage's boss status
+    setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
+    setIsBossBattleActive(false);
+    const newEnemy = generateNewEnemy(newStage, playerPartyRef.current.ngPlusLevel);
+    setCurrentEnemy(newEnemy);
+    addLogMessage(`${newEnemy.name} 등장!`, 'system');
+    saveGameState();
+  }, [addLogMessage, getEffectiveMemberStats, saveGameState]);
+
 
   const handleStartNewGamePlus = useCallback(() => {
     const currentParty = playerPartyRef.current;
@@ -428,7 +449,7 @@ const App = (): React.ReactNode => {
                     isUpgrade = true;
                 } else if (itemToAutoEquip.rarity === currentEquippedItem.rarity) {
                     if (slotToEquip === 'weapon') {
-                        const memberBaseStats = getEffectiveMemberStats(member, newParty); // Get base bonuses from level/party upgrades without current weapon
+                        const memberBaseStats = getEffectiveMemberStats(member, newParty); 
                         const newItemScore = calculateWeaponScore(itemToAutoEquip, member.baseWeaponDamageDiceStr, memberBaseStats.damageBonus - (currentEquippedItem?.damageBonusMod || 0), memberBaseStats.attackBonus - (currentEquippedItem?.attackBonusMod || 0) );
                         const currentItemScore = calculateWeaponScore(currentEquippedItem, member.baseWeaponDamageDiceStr, memberBaseStats.damageBonus - (currentEquippedItem?.damageBonusMod || 0), memberBaseStats.attackBonus - (currentEquippedItem?.attackBonusMod || 0));
                         if (newItemScore > currentItemScore) isUpgrade = true;
@@ -436,7 +457,7 @@ const App = (): React.ReactNode => {
                         if ((itemToAutoEquip.armorClassMod || 0) > (currentEquippedItem.armorClassMod || 0)) isUpgrade = true;
                     } else if (slotToEquip === 'accessory') {
                         if ((itemToAutoEquip.maxHealthMod || 0) > (currentEquippedItem.maxHealthMod || 0)) isUpgrade = true;
-                        // Add other accessory stat comparisons if desired
+                        
                     }
                 }
 
@@ -515,17 +536,10 @@ const App = (): React.ReactNode => {
                 const loot = getLootDrop(currentStageRef.current, enemy.isBoss || false);
                 if (loot) {
                     if (finalPartyState.inventory.length < finalPartyState.MAX_INVENTORY_SIZE) {
-                        finalPartyState.inventory = [...finalPartyState.inventory, loot]; // Add to temp state first
+                        finalPartyState.inventory = [...finalPartyState.inventory, loot]; 
                         addLogMessage(`아이템 획득: ${loot.name} (${loot.rarity})!`, 'loot');
                         createFloatingText(`${loot.name} 획득!`, 'info', 'enemy');
                         if (isAutoEquipEnabledRef.current) {
-                           // The handleAutoEquipItem will use setPlayerParty, so we pass the loot to it
-                           // but it will operate on the latest playerParty state.
-                           // This can lead to race conditions if setPlayerParty from tick and from auto-equip overlap badly.
-                           // A safer way is to make handleAutoEquipItem return the new party state or indicate changes.
-                           // For now, call it and it will internally update the party state.
-                           // This means finalPartyState here might not reflect the auto-equip immediately.
-                           // The next tick or a re-render will catch it.
                            handleAutoEquipItem(loot); 
                         }
                     } else { addLogMessage(`아이템 ${loot.name}을(를) 발견했지만 가방이 가득 찼습니다!`, 'error'); }
@@ -612,7 +626,7 @@ const App = (): React.ReactNode => {
                                 const revivedMembers = currentWipedParty.members.map(mem => { if (mem.isUnlocked) { const effStats = getEffectiveMemberStats(mem, currentWipedParty); return { ...mem, currentHealth: effStats.maxHealth * PARTY_WIPE_REVIVAL_HEALTH_PERCENT, isActiveInCombat: true, lastAttackTime: 0 }; } return mem; });
                                 addLogMessage("파티가 부활했습니다!", "party"); revivedMembers.filter(m=>m.isUnlocked).forEach(rm => createFloatingText('부활!', 'heal', rm.id));
                                 if (isBossBattleActiveRef.current) { setIsBossBattleActive(false); setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD); setCurrentEnemy(generateNewEnemy(currentStageRef.current, currentWipedParty.ngPlusLevel)); addLogMessage("보스 전투 실패. 일반 몬스터부터 다시 시작합니다.", "system"); }
-                                const partyAfterRevival = {...currentWipedParty, members: revivedMembers}; // Party upgrades are in currentWipedParty and preserved
+                                const partyAfterRevival = {...currentWipedParty, members: revivedMembers}; 
                                 saveGameState(); 
                                 return partyAfterRevival;
                             }); 
@@ -651,7 +665,7 @@ const App = (): React.ReactNode => {
 
   const toggleAutoUpgrade = () => setIsAutoUpgradeEnabled(prev => !prev);
   const toggleAutoStageProgression = () => setIsAutoStageProgressionEnabled(prev => !prev);
-  const toggleAutoEquip = () => setIsAutoEquipEnabled(prev => !prev); // Toggle for auto-equip
+  const toggleAutoEquip = () => setIsAutoEquipEnabled(prev => !prev); 
   
   const getBossStatusMessage = () => { 
     if (isPartyWiped) return <span className="text-red-500 animate-ping">파티 전멸! 부활 대기 중...</span>; 
@@ -661,7 +675,10 @@ const App = (): React.ReactNode => {
     const battlesCompleted = BOSS_BATTLE_THRESHOLD - Math.max(0, battlesUntilBoss); 
     return `보스 출현까지: ${battlesCompleted} / ${BOSS_BATTLE_THRESHOLD} 전투 완료`; 
   };
-  const canManuallyProgress = playerParty.members.some(m => m.isUnlocked && m.isActiveInCombat) && isStageBossDefeated && !isPartyWiped && !canStartNewGamePlus;
+  
+  const canManuallyProgressToNextStage = playerParty.members.some(m => m.isUnlocked && m.isActiveInCombat) && isStageBossDefeated && !isPartyWiped && !canStartNewGamePlus;
+  const canManuallyGoToPreviousStage = currentStage > 1 && playerParty.members.some(m => m.isUnlocked && m.isActiveInCombat) && !isPartyWiped && !canStartNewGamePlus;
+
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-2 sm:p-4 flex flex-col">
@@ -683,9 +700,14 @@ const App = (): React.ReactNode => {
                     다음 회차 (NG+{playerParty.ngPlusLevel + 1}) 시작 <NextStageIcon className="w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" />
                   </button>
                 ) : (
-                  <button onClick={handleNextStage} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-500 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed" title={!canManuallyProgress ? "조건 미충족 (보스 미처치 또는 파티원 전멸)" : "다음 스테이지로 진행"} disabled={!canManuallyProgress}>
-                      다음 스테이지 <NextStageIcon className="w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" />
-                  </button>
+                  <div className="flex space-x-2">
+                    <button onClick={handlePreviousStage} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-700 hover:bg-sky-600 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed" title={!canManuallyGoToPreviousStage ? "조건 미충족 (첫 스테이지, 파티원 전멸 등)" : "이전 스테이지로 이동"} disabled={!canManuallyGoToPreviousStage}>
+                        <PreviousStageIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" /> 이전 스테이지
+                    </button>
+                    <button onClick={handleNextStage} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-500 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed" title={!canManuallyProgressToNextStage ? "조건 미충족 (보스 미처치, 파티원 전멸 등)" : "다음 스테이지로 진행"} disabled={!canManuallyProgressToNextStage}>
+                        다음 스테이지 <NextStageIcon className="w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" />
+                    </button>
+                  </div>
                 )}
             </div>
             <div className="flex flex-wrap justify-center items-center gap-2 mt-2">

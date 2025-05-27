@@ -49,6 +49,12 @@ export const NextStageIcon = ({ className = "w-5 h-5 inline-block mr-1" }: IconP
   </svg>
 );
 
+export const PreviousStageIcon = ({ className = "w-5 h-5 inline-block mr-1" }: IconProps): React.ReactNode => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+  </svg>
+);
+
 export const SaveIcon = ({ className = "w-5 h-5" }: IconProps): React.ReactNode => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className={className}>
     <path d="M3 3.75A1.75 1.75 0 0 1 4.75 2h5.586c.464 0 .909.184 1.237.513l4.414 4.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0 1 15.25 18H4.75A1.75 1.75 0 0 1 3 16.25V3.75Z" />
