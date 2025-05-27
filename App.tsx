@@ -18,7 +18,7 @@ import EquipmentModal from './components/EquipmentModal';
 import { generateNewEnemy, generateBossForStage } from './services/enemyService';
 import { getLootDrop } from './services/lootService';
 import { formatNumber } from './utils/formatters';
-import { NextStageIcon, PreviousStageIcon, SaveIcon } from './components/Icons';
+import { NextStageIcon, PreviousStageIcon, SaveIcon, RefreshIcon } from './components/Icons';
 import { rollD20, rollDice, parseDiceString } from './utils/diceRoller';
 import { getEquipmentEffectValue, getEquipmentDamageDice, isItemEquippable, getSlotDisplayName } from './utils/equipmentUtils';
 import { v4 as uuidv4 } from 'uuid';
@@ -63,6 +63,9 @@ const App = (): React.ReactNode => {
   const isAutoEquipEnabledRef = useRef(isAutoEquipEnabled); 
   const isPartyWipedRef = useRef(isPartyWiped);
   const canStartNewGamePlusRef = useRef(canStartNewGamePlus);
+  const lastEnemyAttackTimeRef = useRef(lastEnemyAttackTime);
+  const lastHealTimeRef = useRef(lastHealTime);
+
 
   useEffect(() => { playerPartyRef.current = playerParty; }, [playerParty]);
   useEffect(() => { currentStageRef.current = currentStage; }, [currentStage]);
@@ -75,6 +78,8 @@ const App = (): React.ReactNode => {
   useEffect(() => { isAutoEquipEnabledRef.current = isAutoEquipEnabled; }, [isAutoEquipEnabled]); 
   useEffect(() => { isPartyWipedRef.current = isPartyWiped; }, [isPartyWiped]);
   useEffect(() => { canStartNewGamePlusRef.current = canStartNewGamePlus; }, [canStartNewGamePlus]);
+  useEffect(() => { lastEnemyAttackTimeRef.current = lastEnemyAttackTime; }, [lastEnemyAttackTime]);
+  useEffect(() => { lastHealTimeRef.current = lastHealTime; }, [lastHealTime]);
 
 
   const addLogMessage = useCallback((text: string, type: GameLogMessage['type'], details?: string) => {
@@ -144,13 +149,16 @@ const App = (): React.ReactNode => {
     let damageBonus = Math.max(0, Math.floor(member.baseAttack / 3 - 2));
     let weaponDamageDiceStr = member.baseWeaponDamageDiceStr;
 
-    if (!forInitialHealth) { /* party upgrades */ } 
+    // This function is used for initial health setup, so party upgrades are not applied yet.
+    // It's simplified compared to getEffectiveMemberStats.
     
     for (const slotKey in member.equipment) {
         const item = member.equipment[slotKey as EquipmentSlot];
         if (item) {
             maxHealth += getEquipmentEffectValue(item, 'maxHealthMod');
             armorClass += getEquipmentEffectValue(item, 'armorClassMod');
+            // Attack speed, attack bonus, damage bonus modifications from equipment are not calculated here
+            // as this function is primarily for maxHealth initalization with starting gear.
             if (item.slot === 'weapon' && item.weaponDamageDiceStrOverride) weaponDamageDiceStr = item.weaponDamageDiceStrOverride;
         }
     }
@@ -209,7 +217,8 @@ const App = (): React.ReactNode => {
             };
             
             loadedPartyState.members.forEach(m => {
-                 m.currentHealth = Math.min(parsedData.playerParty?.members.find((sm:any) => sm.id === m.id)?.currentHealth || getEffectiveMemberStats(m, loadedPartyState, true).maxHealth, getEffectiveMemberStats(m, loadedPartyState, true).maxHealth);
+                 const initialEffectiveStats = getEffectiveMemberStatsForApp(m, loadedPartyState, true);
+                 m.currentHealth = Math.min(parsedData.playerParty?.members.find((sm:any) => sm.id === m.id)?.currentHealth || initialEffectiveStats.maxHealth, initialEffectiveStats.maxHealth);
             });
 
             setPlayerParty(loadedPartyState);
@@ -222,6 +231,9 @@ const App = (): React.ReactNode => {
             setIsAutoUpgradeEnabled(parsedData.isAutoUpgradeEnabled !== undefined ? parsedData.isAutoUpgradeEnabled : true);
             setIsAutoStageProgressionEnabled(parsedData.isAutoStageProgressionEnabled !== undefined ? parsedData.isAutoStageProgressionEnabled : true);
             setIsAutoEquipEnabled(parsedData.isAutoEquipEnabled !== undefined ? parsedData.isAutoEquipEnabled : true); 
+            setLastEnemyAttackTime(parsedData.lastEnemyAttackTime || 0);
+            setLastHealTime(parsedData.lastHealTime || 0);
+
 
             if (parsedData.canStartNewGamePlus) { 
                 initialEnemyToSpawn = null;
@@ -234,10 +246,16 @@ const App = (): React.ReactNode => {
                 initialEnemyToSpawn = generateNewEnemy(loadedStage, loadedPartyState.ngPlusLevel);
             }
 
-        } catch (error) { console.error('저장 데이터 불러오기 실패 (NG+):', error); gameLoadedMessage = '저장 데이터 오류. 새 모험으로 시작합니다.'; setPlayerParty(JSON.parse(JSON.stringify(INITIAL_PLAYER_PARTY_STATE))); setCurrentStage(1); initialEnemyToSpawn = generateNewEnemy(1, 0); }
+        } catch (error) { console.error('저장 데이터 불러오기 실패 (NG+):', error); gameLoadedMessage = '저장 데이터 오류. 새 모험으로 시작합니다.'; 
+            const freshParty = JSON.parse(JSON.stringify(INITIAL_PLAYER_PARTY_STATE));
+            freshParty.members.forEach((member: PartyMember) => { member.currentHealth = getEffectiveMemberStatsForApp(member, freshParty, true).maxHealth; });
+            setPlayerParty(freshParty); 
+            setCurrentStage(1); 
+            initialEnemyToSpawn = generateNewEnemy(1, 0); 
+        }
     } else { gameLoadedMessage = '새로운 D&D 파티 모험을 시작합니다! 행운을 빌어요!'; 
         const freshParty = JSON.parse(JSON.stringify(INITIAL_PLAYER_PARTY_STATE));
-        freshParty.members.forEach((member: PartyMember) => { member.currentHealth = getEffectiveMemberStats(member, freshParty, true).maxHealth; });
+        freshParty.members.forEach((member: PartyMember) => { member.currentHealth = getEffectiveMemberStatsForApp(member, freshParty, true).maxHealth; });
         setPlayerParty(freshParty);
         initialEnemyToSpawn = generateNewEnemy(1, 0);
     }
@@ -245,12 +263,12 @@ const App = (): React.ReactNode => {
     if (initialEnemyToSpawn && !currentEnemyRef.current && !canStartNewGamePlusRef.current) { 
         setCurrentEnemy(initialEnemyToSpawn);
     }
-  }, [addLogMessage, getEffectiveMemberStats]);
+  }, [addLogMessage]); // getEffectiveMemberStats removed as getEffectiveMemberStatsForApp is used for init
 
 
   const saveGameState = useCallback(() => {
     try {
-      const gameState = { playerParty: playerPartyRef.current, currentStage: currentStageRef.current, battlesUntilBoss: battlesUntilBossRef.current, isBossBattleActive: isBossBattleActiveRef.current, isStageBossDefeated: isStageBossDefeatedRef.current, canStartNewGamePlus: canStartNewGamePlusRef.current, isAutoUpgradeEnabled: isAutoUpgradeEnabledRef.current, isAutoStageProgressionEnabled: isAutoStageProgressionEnabledRef.current, isAutoEquipEnabled: isAutoEquipEnabledRef.current }; 
+      const gameState = { playerParty: playerPartyRef.current, currentStage: currentStageRef.current, battlesUntilBoss: battlesUntilBossRef.current, isBossBattleActive: isBossBattleActiveRef.current, isStageBossDefeated: isStageBossDefeatedRef.current, canStartNewGamePlus: canStartNewGamePlusRef.current, isAutoUpgradeEnabled: isAutoUpgradeEnabledRef.current, isAutoStageProgressionEnabled: isAutoStageProgressionEnabledRef.current, isAutoEquipEnabled: isAutoEquipEnabledRef.current, lastEnemyAttackTime: lastEnemyAttackTimeRef.current, lastHealTime: lastHealTimeRef.current }; 
       localStorage.setItem(IDLE_RPG_SAVE_KEY, JSON.stringify(gameState));
       addLogMessage('게임이 자동 저장되었습니다.', 'save');
     } catch (error) { console.error('게임 저장 실패:', error); addLogMessage('게임 저장에 실패했습니다.', 'error'); }
@@ -340,7 +358,7 @@ const App = (): React.ReactNode => {
     setCurrentStage(newStage);
     addLogMessage(`스테이지 ${newStage}(으)로 이동합니다.`, 'system');
     setPlayerParty(prevParty => ({ ...prevParty, members: prevParty.members.map(m => { if (m.isUnlocked) { const effectiveStats = getEffectiveMemberStats(m, prevParty); return { ...m, isActiveInCombat: true, currentHealth: effectiveStats.maxHealth, lastAttackTime: 0 }; } return m; }) }));
-    setIsStageBossDefeated(true); // Player is returning to an already cleared stage's boss status
+    setIsStageBossDefeated(true); 
     setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
     setIsBossBattleActive(false);
     const newEnemy = generateNewEnemy(newStage, playerPartyRef.current.ngPlusLevel);
@@ -489,172 +507,255 @@ const App = (): React.ReactNode => {
   }, [addLogMessage, createFloatingText, getEffectiveMemberStats]);
 
 
-  // Main Game Tick
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (isPartyWipedRef.current || canStartNewGamePlusRef.current) return; 
-      const now = Date.now(); const enemy = currentEnemyRef.current; 
+  const executeGameTickLogic = useCallback(() => {
+    if (isPartyWipedRef.current || canStartNewGamePlusRef.current) return;
+    const now = Date.now();
+    const enemy = currentEnemyRef.current;
 
-      setPlayerParty(prevParty => {
-        let enemyDamagedThisTick = false; let enemyCurrentHealth = enemy?.currentHealth || 0;
-        let partyStateAfterMemberActions = { ...prevParty };
-        
-        partyStateAfterMemberActions.members = prevParty.members.map(member => {
-          if (!member.isUnlocked || !member.isActiveInCombat || !enemy || enemyCurrentHealth <= 0) return member;
-          const effectiveStats = getEffectiveMemberStats(member, prevParty);
-          if (now - (member.lastAttackTime || 0) >= 1000 / effectiveStats.attackSpeed) {
-            const d20Roll = rollD20(); const totalToHit = d20Roll + effectiveStats.attackBonus;
-            const isCritHit = d20Roll === CRITICAL_HIT_ROLL; const isCritMiss = d20Roll === CRITICAL_MISS_ROLL;
-            const isHit = !isCritMiss && (isCritHit || totalToHit >= enemy.armorClass);
+    setPlayerParty(prevParty => {
+      let enemyDamagedThisTick = false;
+      let enemyCurrentHealth = enemy?.currentHealth || 0;
+      let partyStateAfterMemberActions = { ...prevParty };
+
+      partyStateAfterMemberActions.members = prevParty.members.map(member => {
+        if (!member.isUnlocked || !member.isActiveInCombat || !enemy || enemyCurrentHealth <= 0) return member;
+        const effectiveStats = getEffectiveMemberStats(member, prevParty);
+        if (now - (member.lastAttackTime || 0) >= 1000 / effectiveStats.attackSpeed) {
+          const d20Roll = rollD20();
+          const totalToHit = d20Roll + effectiveStats.attackBonus;
+          const isCritHit = d20Roll === CRITICAL_HIT_ROLL;
+          const isCritMiss = d20Roll === CRITICAL_MISS_ROLL;
+          const isHit = !isCritMiss && (isCritHit || totalToHit >= enemy.armorClass);
+          let resultType: DiceRollDisplayInfo['resultType'] = isCritHit ? 'crit_hit' : isHit ? 'hit' : isCritMiss ? 'crit_miss' : 'miss';
+          showDiceRollAnimation({ attackerName: member.name, targetName: enemy.name, d20Roll, bonus: effectiveStats.attackBonus, totalToHit, targetAC: enemy.armorClass, resultType });
+          const logDetails = `(d20: ${d20Roll} + 보너스: ${effectiveStats.attackBonus} = ${totalToHit} vs AC ${enemy.armorClass})`;
+
+          if (isHit) {
+            const diceParts = parseDiceString(effectiveStats.weaponDamageDiceStr);
+            let damageDealt = 0;
+            let damageRollDetail = "";
+            if (diceParts) {
+              let baseDamageRoll = rollDice(diceParts.count, diceParts.sides);
+              damageRollDetail = `${diceParts.count}d${diceParts.sides}: ${baseDamageRoll}`;
+              if (isCritHit) {
+                const critDamageRoll = rollDice(diceParts.count, diceParts.sides);
+                baseDamageRoll += critDamageRoll;
+                damageRollDetail += ` + 추가 ${critDamageRoll} (치명타!)`;
+              }
+              damageDealt = Math.max(1, baseDamageRoll + effectiveStats.damageBonus);
+            } else {
+              damageDealt = Math.max(1, effectiveStats.damageBonus);
+              damageRollDetail = "무기 오류";
+            }
+            createFloatingText(`${damageDealt}`, isCritHit ? 'crit_damage' : 'damage', 'enemy');
+            enemyCurrentHealth -= damageDealt;
+            enemyDamagedThisTick = true;
+            addLogMessage(`${isCritHit ? '✨치명타! ' : ''}${member.name} → ${enemy.name}: ${formatNumber(damageDealt)} 피해. ${logDetails}`, isCritHit ? 'crit' : 'combat', `피해 상세: ${damageRollDetail} + 보너스: ${effectiveStats.damageBonus}`);
+          } else {
+            createFloatingText('빗나감!', 'miss', 'enemy');
+            addLogMessage(`${member.name}의 공격이 ${enemy.name}에게 빗나갔습니다! ${logDetails}`, 'combat');
+          }
+          return { ...member, lastAttackTime: now };
+        }
+        return member;
+      });
+
+      let finalPartyState = partyStateAfterMemberActions;
+
+      if (enemyDamagedThisTick && enemy) {
+        setCurrentEnemy(prevEnemy => prevEnemy ? { ...prevEnemy, currentHealth: Math.max(0, enemyCurrentHealth) } : null);
+        if (enemyCurrentHealth <= 0) {
+          addLogMessage(`${enemy.name} 처치!`, 'reward');
+          createFloatingText(`+${formatNumber(enemy.goldReward)} G`, 'info', 'enemy');
+          createFloatingText(`+${formatNumber(enemy.xpReward)} XP`, 'info', 'enemy');
+
+          const loot = getLootDrop(currentStageRef.current, enemy.isBoss || false);
+          if (loot) {
+            if (finalPartyState.inventory.length < finalPartyState.MAX_INVENTORY_SIZE) {
+              finalPartyState.inventory = [...finalPartyState.inventory, loot];
+              addLogMessage(`아이템 획득: ${loot.name} (${loot.rarity})!`, 'loot');
+              createFloatingText(`${loot.name} 획득!`, 'info', 'enemy');
+              if (isAutoEquipEnabledRef.current) {
+                handleAutoEquipItem(loot);
+              }
+            } else {
+              addLogMessage(`아이템 ${loot.name}을(를) 발견했지만 가방이 가득 찼습니다!`, 'error');
+            }
+          }
+
+          const activeAttackers = finalPartyState.members.filter(m => m.isUnlocked && m.isActiveInCombat);
+          const xpPerMember = activeAttackers.length > 0 ? Math.floor(enemy.xpReward / activeAttackers.length) : 0;
+
+          finalPartyState.gold += enemy.goldReward;
+          finalPartyState.members = finalPartyState.members.map(member => {
+            if (activeAttackers.find(a => a.id === member.id)) {
+              let newXp = member.xp + xpPerMember;
+              let newLevel = member.level;
+              let newBaseMaxHealth = member.baseMaxHealth;
+              let newBaseAttack = member.baseAttack;
+              let newBaseDefense = member.baseDefense;
+              let newXpToNextLevel = member.xpToNextLevel;
+              let memberCurrentHealth = member.currentHealth;
+              while (newXp >= newXpToNextLevel) {
+                newXp -= newXpToNextLevel;
+                newLevel += 1;
+                newBaseMaxHealth += STAT_INCREASE_PER_MEMBER_LEVEL.maxHealth;
+                newBaseAttack += STAT_INCREASE_PER_MEMBER_LEVEL.attack;
+                newBaseDefense += STAT_INCREASE_PER_MEMBER_LEVEL.defense;
+                newXpToNextLevel = Math.floor(newXpToNextLevel * XP_TO_NEXT_LEVEL_MULTIPLIER_MEMBER);
+                const tempMemberForStats = { ...member, baseMaxHealth: newBaseMaxHealth, baseAttack: newBaseAttack, baseDefense: newBaseDefense, level: newLevel };
+                memberCurrentHealth = getEffectiveMemberStats(tempMemberForStats, finalPartyState).maxHealth;
+                addLogMessage(`${member.name} 레벨 업! ${newLevel}레벨 달성.`, 'party');
+                createFloatingText('레벨 업!', 'info', member.id);
+              }
+              return { ...member, xp: newXp, level: newLevel, baseMaxHealth: newBaseMaxHealth, baseAttack: newBaseAttack, baseDefense: newBaseDefense, xpToNextLevel: newXpToNextLevel, currentHealth: memberCurrentHealth };
+            }
+            return member;
+          });
+
+          if (isBossBattleActiveRef.current && enemy.isBoss) {
+            if (currentStageRef.current === FINAL_STAGE_FOR_NG_PLUS) {
+              addLogMessage(`최종 보스 ${enemy.name} 격파! 다음 회차 진행이 가능합니다.`, 'reward');
+              setCanStartNewGamePlus(true);
+            } else {
+              addLogMessage(`보스 ${enemy.name} 격파! 다음 스테이지로 진행 가능.`, 'reward');
+            }
+            setIsBossBattleActive(false);
+            setCurrentEnemy(null);
+            setIsStageBossDefeated(true);
+            saveGameState();
+          } else {
+            setBattlesUntilBoss(prevCount => {
+              const newCount = prevCount - 1;
+              if (newCount <= 0 && !isStageBossDefeatedRef.current) {
+                setIsBossBattleActive(true);
+                const boss = generateBossForStage(currentStageRef.current, finalPartyState.ngPlusLevel);
+                setCurrentEnemy(boss);
+                addLogMessage(`강력한 ${boss.name} 출현!`, 'system');
+              } else {
+                const newRegularEnemy = generateNewEnemy(currentStageRef.current, finalPartyState.ngPlusLevel);
+                setCurrentEnemy(newRegularEnemy);
+                addLogMessage(`${newRegularEnemy.name} 등장! (보스까지 ${BOSS_BATTLE_THRESHOLD - newCount}/${BOSS_BATTLE_THRESHOLD})`, 'system');
+              }
+              return newCount;
+            });
+            saveGameState();
+          }
+        }
+      }
+
+      // Enemy Attack Logic
+      if (now - lastEnemyAttackTimeRef.current >= ENEMY_ATTACK_INTERVAL_MS) {
+        if (enemy && enemyCurrentHealth > 0 && finalPartyState.members.some(m => m.isUnlocked && m.isActiveInCombat)) {
+          const targetableMembers = finalPartyState.members.filter(m => m.isUnlocked && m.isActiveInCombat);
+          if (targetableMembers.length > 0) {
+            const targetMember = targetableMembers[Math.floor(Math.random() * targetableMembers.length)];
+            const effectiveTargetStats = getEffectiveMemberStats(targetMember, finalPartyState);
+            const d20Roll = rollD20();
+            const totalToHit = d20Roll + enemy.attackBonus;
+            const isCritHit = d20Roll === CRITICAL_HIT_ROLL;
+            const isCritMiss = d20Roll === CRITICAL_MISS_ROLL;
+            const isHit = !isCritMiss && (isCritHit || totalToHit >= effectiveTargetStats.armorClass);
             let resultType: DiceRollDisplayInfo['resultType'] = isCritHit ? 'crit_hit' : isHit ? 'hit' : isCritMiss ? 'crit_miss' : 'miss';
-            showDiceRollAnimation({ attackerName: member.name, targetName: enemy.name, d20Roll, bonus: effectiveStats.attackBonus, totalToHit, targetAC: enemy.armorClass, resultType });
-            const logDetails = `(d20: ${d20Roll} + 보너스: ${effectiveStats.attackBonus} = ${totalToHit} vs AC ${enemy.armorClass})`;
+            showDiceRollAnimation({ attackerName: enemy.name, targetName: targetMember.name, d20Roll, bonus: enemy.attackBonus, totalToHit, targetAC: effectiveTargetStats.armorClass, resultType });
+            const logDetails = `(d20: ${d20Roll} + 보너스: ${enemy.attackBonus} = ${totalToHit} vs AC ${effectiveTargetStats.armorClass})`;
+            let newTargetHealth = targetMember.currentHealth;
 
             if (isHit) {
-              const diceParts = parseDiceString(effectiveStats.weaponDamageDiceStr); let damageDealt = 0; let damageRollDetail = "";
+              const diceParts = parseDiceString(enemy.weaponDamageDiceStr);
+              let damageDealt = 0;
+              let damageRollDetail = "";
               if (diceParts) {
-                let baseDamageRoll = rollDice(diceParts.count, diceParts.sides); damageRollDetail = `${diceParts.count}d${diceParts.sides}: ${baseDamageRoll}`;
-                if (isCritHit) { const critDamageRoll = rollDice(diceParts.count, diceParts.sides); baseDamageRoll += critDamageRoll; damageRollDetail += ` + 추가 ${critDamageRoll} (치명타!)`; }
-                damageDealt = Math.max(1, baseDamageRoll + effectiveStats.damageBonus);
-              } else { damageDealt = Math.max(1, effectiveStats.damageBonus); damageRollDetail = "무기 오류"; }
-              createFloatingText(`${damageDealt}`, isCritHit ? 'crit_damage' : 'damage', 'enemy');
-              enemyCurrentHealth -= damageDealt; enemyDamagedThisTick = true;
-              addLogMessage(`${isCritHit ? '✨치명타! ' : ''}${member.name} → ${enemy.name}: ${formatNumber(damageDealt)} 피해. ${logDetails}`, isCritHit ? 'crit' : 'combat', `피해 상세: ${damageRollDetail} + 보너스: ${effectiveStats.damageBonus}`);
-            } else { createFloatingText('빗나감!', 'miss', 'enemy'); addLogMessage(`${member.name}의 공격이 ${enemy.name}에게 빗나갔습니다! ${logDetails}`, 'combat'); }
-            return { ...member, lastAttackTime: now };
-          } return member;
-        });
-        
-        let finalPartyState = partyStateAfterMemberActions;
-
-        if (enemyDamagedThisTick && enemy) {
-           setCurrentEnemy(prevEnemy => prevEnemy ? { ...prevEnemy, currentHealth: Math.max(0, enemyCurrentHealth) } : null);
-            if (enemyCurrentHealth <= 0) {
-                addLogMessage(`${enemy.name} 처치!`, 'reward');
-                createFloatingText(`+${formatNumber(enemy.goldReward)} G`, 'info', 'enemy'); createFloatingText(`+${formatNumber(enemy.xpReward)} XP`, 'info', 'enemy');
-                
-                const loot = getLootDrop(currentStageRef.current, enemy.isBoss || false);
-                if (loot) {
-                    if (finalPartyState.inventory.length < finalPartyState.MAX_INVENTORY_SIZE) {
-                        finalPartyState.inventory = [...finalPartyState.inventory, loot]; 
-                        addLogMessage(`아이템 획득: ${loot.name} (${loot.rarity})!`, 'loot');
-                        createFloatingText(`${loot.name} 획득!`, 'info', 'enemy');
-                        if (isAutoEquipEnabledRef.current) {
-                           handleAutoEquipItem(loot); 
-                        }
-                    } else { addLogMessage(`아이템 ${loot.name}을(를) 발견했지만 가방이 가득 찼습니다!`, 'error'); }
+                let baseDamageRoll = rollDice(diceParts.count, diceParts.sides);
+                damageRollDetail = `${diceParts.count}d${diceParts.sides}: ${baseDamageRoll}`;
+                if (isCritHit) {
+                  const critDamageRoll = rollDice(diceParts.count, diceParts.sides);
+                  baseDamageRoll += critDamageRoll;
+                  damageRollDetail += ` + 추가 ${critDamageRoll} (치명타!)`;
                 }
-
-                const activeAttackers = finalPartyState.members.filter(m => m.isUnlocked && m.isActiveInCombat);
-                const xpPerMember = activeAttackers.length > 0 ? Math.floor(enemy.xpReward / activeAttackers.length) : 0;
-                
-                finalPartyState.gold += enemy.goldReward;
-                finalPartyState.members = finalPartyState.members.map(member => {
-                    if (activeAttackers.find(a => a.id === member.id)) {
-                        let newXp = member.xp + xpPerMember; let newLevel = member.level; let newBaseMaxHealth = member.baseMaxHealth; let newBaseAttack = member.baseAttack; let newBaseDefense = member.baseDefense; let newXpToNextLevel = member.xpToNextLevel; let memberCurrentHealth = member.currentHealth;
-                        while (newXp >= newXpToNextLevel) {
-                            newXp -= newXpToNextLevel; newLevel += 1; newBaseMaxHealth += STAT_INCREASE_PER_MEMBER_LEVEL.maxHealth; newBaseAttack += STAT_INCREASE_PER_MEMBER_LEVEL.attack; newBaseDefense += STAT_INCREASE_PER_MEMBER_LEVEL.defense; newXpToNextLevel = Math.floor(newXpToNextLevel * XP_TO_NEXT_LEVEL_MULTIPLIER_MEMBER);
-                            const tempMemberForStats = {...member, baseMaxHealth: newBaseMaxHealth, baseAttack: newBaseAttack, baseDefense: newBaseDefense, level: newLevel}; memberCurrentHealth = getEffectiveMemberStats(tempMemberForStats, finalPartyState).maxHealth; 
-                            addLogMessage(`${member.name} 레벨 업! ${newLevel}레벨 달성.`, 'party'); createFloatingText('레벨 업!', 'info', member.id);
-                        }
-                        return { ...member, xp: newXp, level: newLevel, baseMaxHealth: newBaseMaxHealth, baseAttack: newBaseAttack, baseDefense: newBaseDefense, xpToNextLevel: newXpToNextLevel, currentHealth: memberCurrentHealth };
-                    } return member;
-                });
-                 
-                if (isBossBattleActiveRef.current && enemy.isBoss) {
-                    if (currentStageRef.current === FINAL_STAGE_FOR_NG_PLUS) {
-                        addLogMessage(`최종 보스 ${enemy.name} 격파! 다음 회차 진행이 가능합니다.`, 'reward');
-                        setCanStartNewGamePlus(true); 
-                    } else {
-                        addLogMessage(`보스 ${enemy.name} 격파! 다음 스테이지로 진행 가능.`, 'reward'); 
-                    }
-                    setIsBossBattleActive(false); 
-                    setCurrentEnemy(null); 
-                    setIsStageBossDefeated(true); 
-                    saveGameState(); 
-                } 
-                else { 
-                  setBattlesUntilBoss(prevCount => { 
-                    const newCount = prevCount - 1; 
-                    if (newCount <= 0 && !isStageBossDefeatedRef.current) { 
-                      setIsBossBattleActive(true); 
-                      const boss = generateBossForStage(currentStageRef.current, finalPartyState.ngPlusLevel); 
-                      setCurrentEnemy(boss); 
-                      addLogMessage(`강력한 ${boss.name} 출현!`, 'system'); 
-                    } else { 
-                      const newRegularEnemy = generateNewEnemy(currentStageRef.current, finalPartyState.ngPlusLevel); 
-                      setCurrentEnemy(newRegularEnemy); 
-                      addLogMessage(`${newRegularEnemy.name} 등장! (보스까지 ${BOSS_BATTLE_THRESHOLD - newCount}/${BOSS_BATTLE_THRESHOLD})`, 'system'); 
-                    } 
-                    return newCount; 
-                  }); 
-                  saveGameState(); 
-                }
+                damageDealt = Math.max(1, baseDamageRoll + enemy.damageBonus);
+              } else {
+                damageDealt = Math.max(1, enemy.damageBonus);
+                damageRollDetail = "무기 오류";
+              }
+              newTargetHealth -= damageDealt;
+              createFloatingText(`${damageDealt}`, isCritHit ? 'crit_damage' : 'damage', targetMember.id);
+              addLogMessage(`${isCritHit ? '💥적 치명타! ' : ''}${enemy.name} → ${targetMember.name}: ${formatNumber(damageDealt)} 피해 (체력: ${formatNumber(Math.max(0, newTargetHealth))}/${formatNumber(effectiveTargetStats.maxHealth)}). ${logDetails}`, isCritHit ? 'crit' : 'error', `피해 상세: ${damageRollDetail} + 보너스: ${enemy.damageBonus}`);
+            } else {
+              createFloatingText('빗나감!', 'miss', targetMember.id);
+              addLogMessage(`${enemy.name}의 공격이 ${targetMember.name}에게 빗나갔습니다! ${logDetails}`, 'combat');
             }
-        }
-        // Enemy Attack Logic
-        if (now - lastEnemyAttackTime >= ENEMY_ATTACK_INTERVAL_MS) {
-            if (enemy && enemyCurrentHealth > 0 && finalPartyState.members.some(m => m.isUnlocked && m.isActiveInCombat)) {
-                const targetableMembers = finalPartyState.members.filter(m => m.isUnlocked && m.isActiveInCombat);
-                if (targetableMembers.length > 0) {
-                    const targetMember = targetableMembers[Math.floor(Math.random() * targetableMembers.length)];
-                    const effectiveTargetStats = getEffectiveMemberStats(targetMember, finalPartyState);
-                    const d20Roll = rollD20(); const totalToHit = d20Roll + enemy.attackBonus;
-                    const isCritHit = d20Roll === CRITICAL_HIT_ROLL; const isCritMiss = d20Roll === CRITICAL_MISS_ROLL;
-                    const isHit = !isCritMiss && (isCritHit || totalToHit >= effectiveTargetStats.armorClass);
-                    let resultType: DiceRollDisplayInfo['resultType'] = isCritHit ? 'crit_hit' : isHit ? 'hit' : isCritMiss ? 'crit_miss' : 'miss';
-                    showDiceRollAnimation({ attackerName: enemy.name, targetName: targetMember.name, d20Roll, bonus: enemy.attackBonus, totalToHit, targetAC: effectiveTargetStats.armorClass, resultType });
-                    const logDetails = `(d20: ${d20Roll} + 보너스: ${enemy.attackBonus} = ${totalToHit} vs AC ${effectiveTargetStats.armorClass})`;
-                    let newTargetHealth = targetMember.currentHealth;
 
-                    if (isHit) {
-                        const diceParts = parseDiceString(enemy.weaponDamageDiceStr); let damageDealt = 0; let damageRollDetail = "";
-                        if (diceParts) { let baseDamageRoll = rollDice(diceParts.count, diceParts.sides); damageRollDetail = `${diceParts.count}d${diceParts.sides}: ${baseDamageRoll}`; if (isCritHit) { const critDamageRoll = rollDice(diceParts.count, diceParts.sides); baseDamageRoll += critDamageRoll; damageRollDetail += ` + 추가 ${critDamageRoll} (치명타!)`; } damageDealt = Math.max(1, baseDamageRoll + enemy.damageBonus);
-                        } else { damageDealt = Math.max(1, enemy.damageBonus); damageRollDetail = "무기 오류"; }
-                        newTargetHealth -= damageDealt; createFloatingText(`${damageDealt}`, isCritHit ? 'crit_damage' : 'damage', targetMember.id);
-                        addLogMessage(`${isCritHit ? '💥적 치명타! ' : ''}${enemy.name} → ${targetMember.name}: ${formatNumber(damageDealt)} 피해 (체력: ${formatNumber(Math.max(0,newTargetHealth))}/${formatNumber(effectiveTargetStats.maxHealth)}). ${logDetails}`, isCritHit ? 'crit' : 'error', `피해 상세: ${damageRollDetail} + 보너스: ${enemy.damageBonus}`);
-                    } else { createFloatingText('빗나감!', 'miss', targetMember.id); addLogMessage(`${enemy.name}의 공격이 ${targetMember.name}에게 빗나갔습니다! ${logDetails}`, 'combat'); }
-                    
-                    finalPartyState.members = finalPartyState.members.map(m => {
-                        if (m.id === targetMember.id) { const updatedMemberState = { ...m, currentHealth: Math.max(0, newTargetHealth) }; if (updatedMemberState.currentHealth <= 0 && m.isActiveInCombat) { updatedMemberState.isActiveInCombat = false; addLogMessage(`${m.name}이(가) 쓰러졌습니다!`, 'party'); createFloatingText('쓰러짐!', 'ko', m.id); } return updatedMemberState; } return m;
-                    });
-
-                    if (finalPartyState.members.every(m => !m.isUnlocked || !m.isActiveInCombat)) {
-                        setIsPartyWiped(true); addLogMessage("파티가 전멸했습니다! 잠시 후 부활합니다...", "error");
-                        setTimeout(() => {
-                            setPlayerParty(currentWipedParty => {
-                                const revivedMembers = currentWipedParty.members.map(mem => { if (mem.isUnlocked) { const effStats = getEffectiveMemberStats(mem, currentWipedParty); return { ...mem, currentHealth: effStats.maxHealth * PARTY_WIPE_REVIVAL_HEALTH_PERCENT, isActiveInCombat: true, lastAttackTime: 0 }; } return mem; });
-                                addLogMessage("파티가 부활했습니다!", "party"); revivedMembers.filter(m=>m.isUnlocked).forEach(rm => createFloatingText('부활!', 'heal', rm.id));
-                                if (isBossBattleActiveRef.current) { setIsBossBattleActive(false); setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD); setCurrentEnemy(generateNewEnemy(currentStageRef.current, currentWipedParty.ngPlusLevel)); addLogMessage("보스 전투 실패. 일반 몬스터부터 다시 시작합니다.", "system"); }
-                                const partyAfterRevival = {...currentWipedParty, members: revivedMembers}; 
-                                saveGameState(); 
-                                return partyAfterRevival;
-                            }); 
-                            setIsPartyWiped(false);
-                        }, PARTY_WIPE_REVIVAL_DELAY_MS);
-                    }
+            finalPartyState.members = finalPartyState.members.map(m => {
+              if (m.id === targetMember.id) {
+                const updatedMemberState = { ...m, currentHealth: Math.max(0, newTargetHealth) };
+                if (updatedMemberState.currentHealth <= 0 && m.isActiveInCombat) {
+                  updatedMemberState.isActiveInCombat = false;
+                  addLogMessage(`${m.name}이(가) 쓰러졌습니다!`, 'party');
+                  createFloatingText('쓰러짐!', 'ko', m.id);
                 }
-            }
-            setLastEnemyAttackTime(now);
-        }
-
-        // Health Regen
-        if (now - lastHealTime >= 1000) { 
-            finalPartyState.members = finalPartyState.members.map(member => {
-                if (member.isUnlocked && member.isActiveInCombat && member.currentHealth > 0) {
-                const effectiveStats = getEffectiveMemberStats(member, finalPartyState);
-                if (member.currentHealth < effectiveStats.maxHealth) {
-                    const healAmount = Math.max(1, Math.floor(effectiveStats.maxHealth * (PARTY_MEMBER_HEALTH_REGEN_PERCENT_PER_SECOND / 100)));
-                    return {...member, currentHealth: Math.min(effectiveStats.maxHealth, member.currentHealth + healAmount)};
-                }} return member;
+                return updatedMemberState;
+              }
+              return m;
             });
-            setLastHealTime(now);
+
+            if (finalPartyState.members.every(m => !m.isUnlocked || !m.isActiveInCombat)) {
+              setIsPartyWiped(true);
+              addLogMessage("파티가 전멸했습니다! 잠시 후 부활합니다...", "error");
+              setTimeout(() => {
+                setPlayerParty(currentWipedParty => {
+                  const revivedMembers = currentWipedParty.members.map(mem => {
+                    if (mem.isUnlocked) {
+                      const effStats = getEffectiveMemberStats(mem, currentWipedParty);
+                      return { ...mem, currentHealth: effStats.maxHealth * PARTY_WIPE_REVIVAL_HEALTH_PERCENT, isActiveInCombat: true, lastAttackTime: 0 };
+                    }
+                    return mem;
+                  });
+                  addLogMessage("파티가 부활했습니다!", "party");
+                  revivedMembers.filter(m => m.isUnlocked).forEach(rm => createFloatingText('부활!', 'heal', rm.id));
+                  if (isBossBattleActiveRef.current) {
+                    setIsBossBattleActive(false);
+                    setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
+                    setCurrentEnemy(generateNewEnemy(currentStageRef.current, currentWipedParty.ngPlusLevel));
+                    addLogMessage("보스 전투 실패. 일반 몬스터부터 다시 시작합니다.", "system");
+                  }
+                  const partyAfterRevival = { ...currentWipedParty, members: revivedMembers };
+                  saveGameState();
+                  return partyAfterRevival;
+                });
+                setIsPartyWiped(false);
+              }, PARTY_WIPE_REVIVAL_DELAY_MS);
+            }
+          }
         }
-        return finalPartyState;
-      });
-    }, GAME_TICK_INTERVAL_MS);
+        setLastEnemyAttackTime(now);
+      }
+
+      // Health Regen
+      if (now - lastHealTimeRef.current >= 1000) {
+        finalPartyState.members = finalPartyState.members.map(member => {
+          if (member.isUnlocked && member.isActiveInCombat && member.currentHealth > 0) {
+            const effectiveStats = getEffectiveMemberStats(member, finalPartyState);
+            if (member.currentHealth < effectiveStats.maxHealth) {
+              const healAmount = Math.max(1, Math.floor(effectiveStats.maxHealth * (PARTY_MEMBER_HEALTH_REGEN_PERCENT_PER_SECOND / 100)));
+              return { ...member, currentHealth: Math.min(effectiveStats.maxHealth, member.currentHealth + healAmount) };
+            }
+          }
+          return member;
+        });
+        setLastHealTime(now);
+      }
+      return finalPartyState;
+    });
+  }, [addLogMessage, getEffectiveMemberStats, createFloatingText, showDiceRollAnimation, saveGameState, handleAutoEquipItem]);
+
+
+  // Main Game Tick Loop
+  useEffect(() => {
+    const intervalId = setInterval(executeGameTickLogic, GAME_TICK_INTERVAL_MS);
     return () => clearInterval(intervalId);
-  }, [lastEnemyAttackTime, lastHealTime, addLogMessage, getEffectiveMemberStats, createFloatingText, showDiceRollAnimation, saveGameState, handleAutoEquipItem]);
+  }, [executeGameTickLogic]);
+
 
   useEffect(() => {
     if (isStageBossDefeatedRef.current && !isBossBattleActiveRef.current && !currentEnemyRef.current && isAutoStageProgressionEnabledRef.current && playerPartyRef.current.members.some(m => m.isUnlocked && m.isActiveInCombat) && !isPartyWipedRef.current && !canStartNewGamePlusRef.current) { 
@@ -666,6 +767,15 @@ const App = (): React.ReactNode => {
   const toggleAutoUpgrade = () => setIsAutoUpgradeEnabled(prev => !prev);
   const toggleAutoStageProgression = () => setIsAutoStageProgressionEnabled(prev => !prev);
   const toggleAutoEquip = () => setIsAutoEquipEnabled(prev => !prev); 
+
+  const handleForceGameTick = useCallback(() => {
+    if (isPartyWipedRef.current || canStartNewGamePlusRef.current) {
+        addLogMessage("파티 전멸 또는 NG+ 대기 중에는 강제 진행할 수 없습니다.", "error");
+        return;
+    }
+    addLogMessage("강제 진행 버튼 사용됨. 다음 게임 틱을 수동으로 실행합니다.", 'system');
+    executeGameTickLogic();
+  }, [executeGameTickLogic, addLogMessage]);
   
   const getBossStatusMessage = () => { 
     if (isPartyWiped) return <span className="text-red-500 animate-ping">파티 전멸! 부활 대기 중...</span>; 
@@ -678,6 +788,7 @@ const App = (): React.ReactNode => {
   
   const canManuallyProgressToNextStage = playerParty.members.some(m => m.isUnlocked && m.isActiveInCombat) && isStageBossDefeated && !isPartyWiped && !canStartNewGamePlus;
   const canManuallyGoToPreviousStage = currentStage > 1 && playerParty.members.some(m => m.isUnlocked && m.isActiveInCombat) && !isPartyWiped && !canStartNewGamePlus;
+  const canForceTick = !isPartyWiped && !canStartNewGamePlus;
 
 
   return (
@@ -685,9 +796,19 @@ const App = (): React.ReactNode => {
       <header className="mb-4 p-3 sm:p-4 bg-slate-800/70 rounded-lg shadow-xl border border-slate-700">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-3 sm:mb-4">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-sky-400 tracking-wider mb-2 sm:mb-0">방치형 모험가 노트</h1>
-          <button onClick={saveGameState} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md transition-colors flex items-center" title="현재 게임 상태를 수동으로 저장합니다.">
-            <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" /> 게임 저장
-          </button>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={handleForceGameTick} 
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed" 
+              title="게임 진행이 멈춘 것 같을 때 강제로 다음 틱을 실행합니다. 주로 재부팅 후 문제 발생 시 사용하세요."
+              disabled={!canForceTick}
+            >
+              <RefreshIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" /> 강제 진행
+            </button>
+            <button onClick={saveGameState} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md transition-colors flex items-center" title="현재 게임 상태를 수동으로 저장합니다.">
+              <SaveIcon className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" /> 게임 저장
+            </button>
+          </div>
         </div>
         <div className="text-center space-y-2">
             <div className="flex flex-col sm:flex-row justify-center items-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0">
