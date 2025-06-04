@@ -1,7 +1,6 @@
-
-import React from 'react';
-import { EquipmentItem, PlayerParty, EquipmentSlot } from '../types';
-import { InventoryIcon } from './Icons';
+import React, { useState } from 'react';
+import { EquipmentItem, PlayerParty, EquipmentSlot, EquipmentRarity } from '../types';
+import { InventoryIcon, GoldIcon, SellIcon } from './Icons';
 import { formatNumber } from '../utils/formatters';
 import { getRarityColorClass } from '../utils/equipmentUtils';
 
@@ -9,18 +8,40 @@ interface InventoryPanelProps {
   inventory: EquipmentItem[];
   maxInventorySize: number;
   onOpenEquipmentModal: (memberId: string | null, slotType: EquipmentSlot | null, inventoryItemId: string) => void;
+  onSelectItem?: (itemId: string) => void; // 아이템 선택 콜백 (모달 열지 않음)
   selectedInventoryItemId: string | null;
+  onSellItem?: (itemId: string) => void; // 아이템 판매 콜백
 }
 
 export const InventoryPanel: React.FC<InventoryPanelProps> = ({ 
   inventory, 
   maxInventorySize, 
   onOpenEquipmentModal,
-  selectedInventoryItemId
+  onSelectItem,
+  selectedInventoryItemId,
+  onSellItem
 }) => {
   
+  // 아이템 선택 처리
   const handleItemClick = (item: EquipmentItem) => {
-    onOpenEquipmentModal(null, null, item.id); // Open modal with item context
+    console.log("아이템 클릭됨:", item.id);
+    // 아이템을 클릭했을 때 모달 열기 (원래 동작으로 복원)
+    onOpenEquipmentModal(null, null, item.id);
+  };
+
+  // 아이템 판매 처리
+  const handleSellItem = (e: React.MouseEvent, itemId: string) => {
+    e.preventDefault(); // 기본 동작 방지
+    e.stopPropagation(); // 상위 요소에 클릭 이벤트 전파 방지
+    console.log("판매 버튼 클릭됨:", itemId);
+    if (onSellItem) {
+      onSellItem(itemId);
+    }
+  };
+
+  // 아이템 희귀도에 따른 색상 설정
+  const getItemRarityColor = (rarity: EquipmentRarity) => {
+    return getRarityColorClass(rarity, 'text');
   };
 
   return (
@@ -73,11 +94,24 @@ export const InventoryPanel: React.FC<InventoryPanelProps> = ({
             </div>
         ))}
       </div>
+      
       {selectedInventoryItemId && inventory.find(i => i.id === selectedInventoryItemId) && (
         <div className="mt-3 pt-3 border-t border-slate-700">
-            <h4 className={`text-sm font-semibold ${getRarityColorClass(inventory.find(i => i.id === selectedInventoryItemId)?.rarity, 'text')}`}>
-                {inventory.find(i => i.id === selectedInventoryItemId)?.name}
-            </h4>
+            <div className="flex justify-between items-start mb-2">
+              <h4 className={`text-sm font-semibold ${getItemRarityColor(inventory.find(i => i.id === selectedInventoryItemId)?.rarity || 'Common')}`}>
+                  {inventory.find(i => i.id === selectedInventoryItemId)?.name}
+              </h4>
+              {onSellItem && (
+                <button 
+                  onClick={(e) => handleSellItem(e, selectedInventoryItemId)}
+                  className="flex items-center bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded transition-colors shadow-sm animate-pulse"
+                  title="이 아이템을 판매합니다"
+                >
+                  <SellIcon className="w-4 h-4 mr-1" />
+                  아이템 판매
+                </button>
+              )}
+            </div>
             <p className="text-xs text-slate-400 mt-1">
                 {inventory.find(i => i.id === selectedInventoryItemId)?.description}
             </p>

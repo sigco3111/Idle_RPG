@@ -1,4 +1,3 @@
-
 import { EnemyStats } from '../types';
 import {
   ENEMY_NAMES,
@@ -20,16 +19,16 @@ import {
 } from '../constants';
 
 const calculateEnemyDnDStats = (baseAttackForDnd: number, baseDefenseForDnd: number, level: number, isBoss: boolean = false): Pick<EnemyStats, 'armorClass' | 'attackBonus' | 'damageBonus' | 'weaponDamageDiceStr'> => {
-  const ac = BASE_AC + Math.floor(baseDefenseForDnd / 2) + Math.floor(level / 4);
-  const attackBonus = Math.floor(baseAttackForDnd / 3) -1 + Math.floor(level / 3) + (isBoss ? 1 : 0); 
-  const damageBonus = Math.floor(baseAttackForDnd / 4) + Math.floor(level / 4) + (isBoss ? 1 : 0);
+  const ac = BASE_AC + Math.floor(baseDefenseForDnd / 3) + Math.floor(level / 5);
+  const attackBonus = Math.floor(baseAttackForDnd / 4) + Math.floor(level / 4) + (isBoss ? 1 : 0);
+  const damageBonus = Math.floor(baseAttackForDnd / 5) + Math.floor(level / 5) + (isBoss ? 1 : 0);
   
   let weaponDice = BASE_ENEMY_WEAPON_DAMAGE_DICE_STR;
   if (isBoss) {
-    weaponDice = level > 10 ? "2d6" : "1d8"; 
+    weaponDice = level > 15 ? "2d6" : level > 7 ? "1d8" : "1d6";
   } else {
-     if (level > 15) weaponDice = "1d8";
-     else if (level > 7) weaponDice = "1d6";
+     if (level > 20) weaponDice = "1d8";
+     else if (level > 10) weaponDice = "1d6";
      else weaponDice = "1d4"; 
   }
 

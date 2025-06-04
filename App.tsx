@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PlayerParty, PartyMember, EnemyStats, GameLogMessage, UpgradeType, EffectiveMemberStats, DiceRollDisplayInfo, FloatingTextInstance, EquipmentItem, EquipmentSlot, EquipmentModalState, CharacterClassName, EquipmentRarity } from './types';
 import { 
@@ -394,9 +393,16 @@ const App = (): React.ReactNode => {
   }, [addLogMessage, getEffectiveMemberStats, saveGameState]);
 
 
-  const handleOpenEquipmentModal = useCallback((memberId: string | null, slotType: EquipmentSlot | null, inventoryItemId?: string) => {
-    setSelectedInventoryItemId(inventoryItemId || null); 
-    setEquipmentModalState({ isOpen: true, memberId, slotType, inventoryItemId: inventoryItemId || null });
+  // 인벤토리 아이템을 선택하는 함수 (모달 열지 않음)
+  const handleSelectInventoryItem = useCallback((itemId: string) => {
+    console.log("아이템 선택됨:", itemId);
+    setSelectedInventoryItemId(itemId);
+  }, []);
+
+  const handleOpenEquipmentModal = useCallback((memberId: string | null, slotType: EquipmentSlot | null, inventoryItemId: string) => {
+    console.log("handleOpenEquipmentModal called with:", { memberId, slotType, inventoryItemId });
+    setSelectedInventoryItemId(inventoryItemId); 
+    setEquipmentModalState({ isOpen: true, memberId, slotType, inventoryItemId });
   }, []);
 
   const handleCloseEquipmentModal = useCallback(() => {
@@ -470,12 +476,14 @@ const App = (): React.ReactNode => {
                         const memberBaseStats = getEffectiveMemberStats(member, newParty); 
                         const newItemScore = calculateWeaponScore(itemToAutoEquip, member.baseWeaponDamageDiceStr, memberBaseStats.damageBonus - (currentEquippedItem?.damageBonusMod || 0), memberBaseStats.attackBonus - (currentEquippedItem?.attackBonusMod || 0) );
                         const currentItemScore = calculateWeaponScore(currentEquippedItem, member.baseWeaponDamageDiceStr, memberBaseStats.damageBonus - (currentEquippedItem?.damageBonusMod || 0), memberBaseStats.attackBonus - (currentEquippedItem?.attackBonusMod || 0));
-                        if (newItemScore > currentItemScore) isUpgrade = true;
+                        if (newItemScore > currentItemScore * 1.05) isUpgrade = true;
                     } else if (slotToEquip === 'armor' || slotToEquip === 'shield') {
                         if ((itemToAutoEquip.armorClassMod || 0) > (currentEquippedItem.armorClassMod || 0)) isUpgrade = true;
+                        if ((itemToAutoEquip.maxHealthMod || 0) > (currentEquippedItem.maxHealthMod || 0) + 5) isUpgrade = true;
                     } else if (slotToEquip === 'accessory') {
                         if ((itemToAutoEquip.maxHealthMod || 0) > (currentEquippedItem.maxHealthMod || 0)) isUpgrade = true;
-                        
+                        if (itemToAutoEquip.attackBonusMod && (!currentEquippedItem.attackBonusMod || itemToAutoEquip.attackBonusMod > currentEquippedItem.attackBonusMod)) isUpgrade = true;
+                        if (itemToAutoEquip.damageBonusMod && (!currentEquippedItem.damageBonusMod || itemToAutoEquip.damageBonusMod > currentEquippedItem.damageBonusMod)) isUpgrade = true;
                     }
                 }
 
@@ -499,6 +507,11 @@ const App = (): React.ReactNode => {
 
                     const newEffectiveStats = getEffectiveMemberStats(member, newParty);
                     if (member.currentHealth > newEffectiveStats.maxHealth) member.currentHealth = newEffectiveStats.maxHealth;
+                    else if (itemToAutoEquip.maxHealthMod && itemToAutoEquip.maxHealthMod > 0) {
+                        const oldMaxHealth = getEffectiveMemberStats(prevParty.members.find(m=>m.id === member.id)!, prevParty).maxHealth;
+                        const healthIncrease = newEffectiveStats.maxHealth - oldMaxHealth;
+                        member.currentHealth = Math.min(newEffectiveStats.maxHealth, member.currentHealth + healthIncrease);
+                    }
                 }
             }
         }
@@ -766,7 +779,7 @@ const App = (): React.ReactNode => {
 
   const toggleAutoUpgrade = () => setIsAutoUpgradeEnabled(prev => !prev);
   const toggleAutoStageProgression = () => setIsAutoStageProgressionEnabled(prev => !prev);
-  const toggleAutoEquip = () => setIsAutoEquipEnabled(prev => !prev); 
+  const toggleAutoEquip = () => setIsAutoEquipEnabled(prev => !prev);
 
   const handleForceGameTick = useCallback(() => {
     if (isPartyWipedRef.current || canStartNewGamePlusRef.current) {
@@ -790,6 +803,56 @@ const App = (): React.ReactNode => {
   const canManuallyGoToPreviousStage = currentStage > 1 && playerParty.members.some(m => m.isUnlocked && m.isActiveInCombat) && !isPartyWiped && !canStartNewGamePlus;
   const canForceTick = !isPartyWiped && !canStartNewGamePlus;
 
+  // 아이템 희귀도에 따른 판매 가격 설정
+  const getItemSellPrice = useCallback((item: EquipmentItem): number => {
+    // 아이템 희귀도에 따라 기본 가격 설정
+    const basePrice = {
+      'Common': 15,
+      'Uncommon': 35,
+      'Rare': 80,
+      'Epic': 200
+    }[item.rarity] || 10;
+    
+    // 스테이지에 따라 가격 보정 (스테이지가 높을수록 더 비싸게 판매)
+    const stageMultiplier = Math.max(1, Math.sqrt(currentStage) * 0.3);
+    
+    // 랜덤 요소 추가 (가격 변동폭 ±15%)
+    const randomFactor = 0.85 + (Math.random() * 0.3);
+    
+    // 최종 판매 가격 계산 및 정수로 반환
+    return Math.floor(basePrice * stageMultiplier * randomFactor);
+  }, [currentStage]);
+
+  // 아이템 판매 처리 함수
+  const handleSellItem = useCallback((itemId: string) => {
+    setPlayerParty(prevParty => {
+      // 판매할 아이템 찾기
+      const itemToSell = prevParty.inventory.find(item => item.id === itemId);
+      
+      if (!itemToSell) {
+        addLogMessage("판매할 아이템을 찾을 수 없습니다.", "error");
+        return prevParty;
+      }
+      
+      // 판매 가격 계산
+      const sellPrice = getItemSellPrice(itemToSell);
+      
+      // 아이템 제거 및 골드 추가
+      const newInventory = prevParty.inventory.filter(item => item.id !== itemId);
+      
+      // 아이템 판매 로그 추가
+      addLogMessage(`${itemToSell.name} 아이템을 ${sellPrice} 골드에 판매했습니다.`, "reward");
+      
+      // 선택된 아이템 ID 초기화
+      setSelectedInventoryItemId(null);
+      
+      return {
+        ...prevParty,
+        inventory: newInventory,
+        gold: prevParty.gold + sellPrice
+      };
+    });
+  }, [addLogMessage, getItemSellPrice]);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 p-2 sm:p-4 flex flex-col">
@@ -853,7 +916,14 @@ const App = (): React.ReactNode => {
           <EnemyPanel enemyStats={currentEnemy} floatingTexts={floatingTexts} onFloatingTextAnimationComplete={handleFloatingTextAnimationComplete} diceRollDisplay={diceRollDisplay} />
         </div>
         <div className="lg:col-span-1 h-full min-h-[300px] sm:min-h-[350px] lg:min-h-0">
-          <InventoryPanel inventory={playerParty.inventory} maxInventorySize={playerParty.MAX_INVENTORY_SIZE} onOpenEquipmentModal={handleOpenEquipmentModal} selectedInventoryItemId={selectedInventoryItemId} />
+          <InventoryPanel 
+            inventory={playerParty.inventory} 
+            maxInventorySize={playerParty.MAX_INVENTORY_SIZE} 
+            onOpenEquipmentModal={handleOpenEquipmentModal}
+            onSelectItem={handleSelectInventoryItem}
+            selectedInventoryItemId={selectedInventoryItemId}
+            onSellItem={handleSellItem} 
+          />
         </div>
         <div className="lg:col-span-1 h-full lg:max-h-[calc(100vh-220px)] min-h-[250px] sm:min-h-[300px] lg:min-h-0">
            <GameLog messages={gameLog} />
@@ -869,6 +939,7 @@ const App = (): React.ReactNode => {
         inventory={playerParty.inventory}
         playerParty={playerParty}
         onEquipItem={handleEquipItemToMember}
+        onSellItem={handleSellItem}
         getEffectiveMemberStats={getEffectiveMemberStats}
       />
       

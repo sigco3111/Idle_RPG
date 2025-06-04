@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { EquipmentItem, PartyMember, EquipmentSlot, PlayerParty } from '../types';
 import { isItemEquippable, getSlotDisplayName, getRarityColorClass } from '../utils/equipmentUtils';
-import { WeaponSlotIcon, ArmorSlotIcon, ShieldSlotIcon, AccessorySlotIcon } from './Icons'; // Assuming you have these
+import { WeaponSlotIcon, ArmorSlotIcon, ShieldSlotIcon, AccessorySlotIcon, GoldIcon, SellIcon } from './Icons';
 
 interface EquipmentModalProps {
   isOpen: boolean;
@@ -13,6 +13,7 @@ interface EquipmentModalProps {
   inventory: EquipmentItem[];
   playerParty: PlayerParty; // To get other members for equipping from inventory item
   onEquipItem: (memberId: string, slotToEquip: EquipmentSlot, itemId: string) => void;
+  onSellItem?: (itemId: string) => void; // 아이템 판매 콜백 함수 추가
   getEffectiveMemberStats: (member: PartyMember, party: PlayerParty) => any; // For stat comparison (simplified)
 }
 
@@ -25,6 +26,7 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({
   inventory,
   playerParty,
   onEquipItem,
+  onSellItem,
   getEffectiveMemberStats
 }) => {
   const [selectedMemberForInventoryItem, setSelectedMemberForInventoryItem] = useState<PartyMember | null>(targetMember);
@@ -86,6 +88,14 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({
       //This case should be covered by itemToDisplayForEquip logic
        onEquipItem(currentMember.id, currentSlot, itemFromInventoryManage.id);
        onClose();
+    }
+  };
+
+  // 아이템 판매 처리 함수
+  const handleSellItem = () => {
+    if (onSellItem && itemFromInventoryManage) {
+      onSellItem(itemFromInventoryManage.id);
+      onClose();
     }
   };
   
@@ -207,6 +217,19 @@ const EquipmentModal: React.FC<EquipmentModalProps> = ({
           >
             취소
           </button>
+          
+          {/* 아이템 판매 버튼 */}
+          {onSellItem && itemFromInventoryManage && (
+            <button
+              onClick={handleSellItem}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-md transition-colors flex items-center"
+              title="이 아이템을 판매합니다"
+            >
+              <SellIcon className="w-4 h-4 mr-1.5" />
+              판매하기
+            </button>
+          )}
+          
           <button
             onClick={handleEquipClick}
             disabled={!itemToDisplayForEquip || !currentMember || !currentSlot || (itemFromInventoryManage ? !isItemEquippable(itemFromInventoryManage, currentMember.className, currentSlot) : false) }
