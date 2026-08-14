@@ -2,14 +2,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>방치형 모험가 노트</title>
+  <link rel="icon" type="image/svg+xml" href="/Idle_RPG/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" sizes="16x16" href="/Idle_RPG/favicon-16x16.svg" />
+  <link rel="icon" type="image/svg+xml" sizes="32x32" href="/Idle_RPG/favicon-32x32.svg" />
+  <link rel="apple-touch-icon" href="/Idle_RPG/apple-touch-icon.svg" />
+  <link rel="manifest" href="/Idle_RPG/site.webmanifest" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: 'Inter', sans-serif; 
-      overflow-x: hidden; 
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #2d3748; }
@@ -21,10 +26,10 @@
 
     .floating-text-effect { position: absolute; animation: floatAndFade 1.5s ease-out forwards; font-weight: bold; padding: 3px 8px; border-radius: 6px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; white-space: nowrap; font-size: 0.9rem; }
     @keyframes floatAndFade { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 20% { transform: translateY(-10px) scale(1); opacity: 1; } 100% { transform: translateY(-70px) scale(1.1); opacity: 0; } }
-    .floating-text-damage { color: white; background-color: rgba(220, 38, 38, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
-    .floating-text-crit { color: black; background-color: rgba(250, 204, 21, 0.85); border: 1px solid rgba(255,255,255,0.5); } 
-    .floating-text-miss { color: white; background-color: rgba(100, 116, 139, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
-    .floating-text-heal { color: white; background-color: rgba(22, 163, 74, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
+    .floating-text-damage { color: white; background-color: rgba(220, 38, 38, 0.7); border: 1px solid rgba(255,255,255,0.3); }
+    .floating-text-crit { color: black; background-color: rgba(250, 204, 21, 0.85); border: 1px solid rgba(255,255,255,0.5); }
+    .floating-text-miss { color: white; background-color: rgba(100, 116, 139, 0.7); border: 1px solid rgba(255,255,255,0.3); }
+    .floating-text-heal { color: white; background-color: rgba(22, 163, 74, 0.7); border: 1px solid rgba(255,255,255,0.3); }
     .floating-text-ko { color: white; background-color: rgba(75,85,99,0.8); font-weight: bold; padding: 5px 10px; font-size:1rem;}
 
     /* Equipment Modal Styles */
@@ -68,8 +73,2538 @@
 </head>
 <body class="bg-slate-900 text-slate-100">
   <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+  <script type="module">
+// index.tsx
+import React6 from "react";
+import ReactDOM from "react-dom/client";
+
+// App.tsx
+import { useState as useState3, useEffect as useEffect5, useCallback, useRef as useRef3 } from "react";
+
+// components/Icons.tsx
+import { jsx, jsxs } from "react/jsx-runtime";
+var AttackIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: /* @__PURE__ */ jsx("path", { d: "M15.904 4.096a.75.75 0 00-1.061-1.06L10 7.879 5.157 3.036a.75.75 0 00-1.061 1.06L8.939 10l-4.843 4.843a.75.75 0 001.06 1.061L10 12.121l4.843 4.843a.75.75 0 001.06-1.061L11.061 10l4.843-4.843a.75.75 0 00.000-.061z" }) });
+var DefenseIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 1c1.383 0 2.671.302 3.824.862l.003.001c.062.031.124.063.185.096a.75.75 0 01-.01 1.339 10.466 10.466 0 00-7.994.001.75.75 0 01-.009-1.34c.06-.032.123-.064.185-.095L6.176 1.862C7.329 1.302 8.617 1 10 1zM3.099 4.833A5.94 5.94 0 002.75 6.5C2.75 9.902 5.818 12.5 10 12.5s7.25-2.598 7.25-6c0-.596-.071-1.174-.208-1.723A.75.75 0 0117.5 5.5c.051.21.08.424.08.642 0 2.95-2.702 5.258-6.025 5.599a.75.75 0 01-.81-.007C7.407 11.37 4.75 9.132 4.75 6.188 4.75 5.97 4.78 5.76 4.83 5.55a.75.75 0 01.719-.718z", clipRule: "evenodd" }),
+  /* @__PURE__ */ jsx("path", { d: "M10 12.5c1.085 0 2.11-.133 3.053-.381a.75.75 0 00.237-1.403 7.519 7.519 0 01-6.581-.001.75.75 0 00.237 1.403A8.98 8.98 0 0110 12.5zm0-10a8.947 8.947 0 00-4.432 1.135A.75.75 0 005.25 4.5c0 .291.022.578.063.859a7.442 7.442 0 019.374 0c.041-.28.063-.568.063-.859a.75.75 0 00-.318-1.135A8.947 8.947 0 0010 2.5z" })
+] });
+var HealthIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: /* @__PURE__ */ jsx("path", { d: "M9.653 16.915l-.005-.003-.019-.01a20.759 20.759 0 01-1.162-.682c-2.058-1.591-4.376-4.013-4.376-7.185 0-2.748 2.257-4.963 5.004-4.963 1.439 0 2.79.566 3.757 1.521A5.002 5.002 0 0115 4.052c2.748 0 4.999 2.215 4.999 4.963 0 3.172-2.318 5.594-4.376 7.185a20.779 20.779 0 01-1.162.682l-.019.01-.005.002a1.001 1.001 0 01-.89 0z" }) });
+var AttackSpeedIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10.22 2.72a.75.75 0 00-1.44-.002L5.89 9.03a.75.75 0 00.527 1.008l4.001.002H10a2.25 2.25 0 012.25 2.25c0 .759-.374 1.434-.968 1.86l-2.638 1.918a.75.75 0 00.936 1.264l2.638-1.918A3.752 3.752 0 0013.75 12.25a3.75 3.75 0 00-3.75-3.75h-.526l2.78-4.768z", clipRule: "evenodd" }),
+  /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 1c1.383 0 2.671.302 3.824.862l.003.001c.062.031.124.063.185.096a.75.75 0 01-.01 1.339A10.466 10.466 0 002.008 3.3a.75.75 0 01-.009-1.34c.06-.032.123-.064.185-.095L2.18 1.863C3.329 1.302 4.617 1 6 1h4zM2.75 6.5a5.94 5.94 0 01.349-1.667.75.75 0 011.25.75A4.44 4.44 0 004.25 6.5c0 2.023 1.442 3.705 3.386 4.218a.75.75 0 01.49.894c-.155.69-.064 1.43.253 2.083a.75.75 0 01-1.356.59A4.372 4.372 0 015.917 12H5.5A2.75 2.75 0 012.75 9.25V6.5z", clipRule: "evenodd" })
+] });
+var GoldIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-4.75a.75.75 0 001.5 0V8.66l1.95 2.1a.75.75 0 101.1-1.02l-3.25-3.5a.75.75 0 00-1.1 0l-3.25 3.5a.75.75 0 101.1 1.02l1.95-2.1v4.59z", clipRule: "evenodd" }) });
+var XPIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: /* @__PURE__ */ jsx("path", { fillRule: "evenodd", d: "M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z", clipRule: "evenodd" }) });
+var NextStageIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" }) });
+var PreviousStageIcon = ({ className = "w-5 h-5 inline-block mr-1" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" }) });
+var SaveIcon = ({ className = "w-5 h-5" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", viewBox: "0 0 20 20", fill: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { d: "M3 3.75A1.75 1.75 0 0 1 4.75 2h5.586c.464 0 .909.184 1.237.513l4.414 4.414c.329.328.513.773.513 1.237v8.086A1.75 1.75 0 0 1 15.25 18H4.75A1.75 1.75 0 0 1 3 16.25V3.75Z" }),
+  /* @__PURE__ */ jsx("path", { d: "M9 8.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5H9.75A.75.75 0 0 1 9 8.25ZM8.25 12a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5H8.25Z" }),
+  /* @__PURE__ */ jsx("path", { d: "M5 5.75A.75.75 0 0 0 5.75 5h2.5a.75.75 0 0 0 0-1.5h-2.5A.75.75 0 0 0 5 5.75Z" })
+] });
+var RefreshIcon = ({ className = "w-5 h-5" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" }) });
+var InventoryIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125V6.375c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v.001c0 .621.504 1.125 1.125 1.125z" }) });
+var WeaponSlotIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M14.25 3.75l-4.5 4.5m0 0l-4.5 4.5M9.75 8.25l4.5-4.5M9.75 8.25l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }),
+  " "
+] });
+var ArmorSlotIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" }),
+  " "
+] });
+var ShieldSlotIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" }),
+  " "
+] });
+var AccessorySlotIcon = ({ className = "w-6 h-6" }) => /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: [
+  /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-4.5A3.375 3.375 0 0012.75 9H11.25A3.375 3.375 0 007.5 12.375V18.75m9 0h-9" }),
+  " "
+] });
+var SellIcon = ({ className = "w-5 h-5" }) => /* @__PURE__ */ jsx("svg", { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor", className, children: /* @__PURE__ */ jsx("path", { strokeLinecap: "round", strokeLinejoin: "round", d: "M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" }) });
+
+// constants.ts
+var INITIAL_PARTY_MEMBERS_CONFIG = [
+  {
+    id: "member-1-warrior",
+    name: "\uC6A9\uC0AC \uBE0C\uB8E8\uD22C\uC2A4",
+    className: "Warrior",
+    baseMaxHealth: 130,
+    baseAttack: 15,
+    baseDefense: 8,
+    baseAttackSpeed: 0.85,
+    baseWeaponDamageDiceStr: "1d4",
+    // Fist damage or basic dagger
+    isUnlocked: true,
+    isActiveInCombat: true,
+    avatarSeed: "warriorHeroDnD",
+    unlockStageRequirement: 1
+  },
+  {
+    id: "member-2-archer",
+    name: "\uBA85\uAD81 \uC5D8\uB77C\uB77C",
+    className: "Archer",
+    baseMaxHealth: 90,
+    baseAttack: 13,
+    baseDefense: 5,
+    baseAttackSpeed: 1.3,
+    baseWeaponDamageDiceStr: "1d3",
+    isUnlocked: false,
+    isActiveInCombat: false,
+    avatarSeed: "archerHeroDnD",
+    unlockStageRequirement: 3
+  },
+  {
+    id: "member-3-mage",
+    name: "\uD604\uC790 \uB9C8\uB9AC\uC6B0\uC2A4",
+    className: "Mage",
+    baseMaxHealth: 75,
+    baseAttack: 11,
+    baseDefense: 3,
+    baseAttackSpeed: 1.1,
+    baseWeaponDamageDiceStr: "1d2",
+    isUnlocked: false,
+    isActiveInCombat: false,
+    avatarSeed: "mageHeroDnD",
+    unlockStageRequirement: 5
+  }
+];
+var COMMON_STARTER_EQUIPMENT = {
+  Warrior: {
+    weapon: { id: "starter-sword", name: "\uD6C8\uB828\uC6A9 \uAC80", slot: "weapon", rarity: "Common", iconSeed: "commonSword", classRequirement: ["Warrior"], weaponDamageDiceStrOverride: "1d6", attackBonusMod: 0, description: "\uAE30\uBCF8\uC801\uC778 \uC804\uD22C \uD6C8\uB828\uC5D0 \uC0AC\uC6A9\uB418\uB294 \uAC80\uC785\uB2C8\uB2E4." },
+    armor: { id: "starter-leather-armor", name: "\uAC00\uC8FD \uC870\uB07C", slot: "armor", rarity: "Common", iconSeed: "commonLeatherArmor", classRequirement: ["Warrior", "Archer"], armorClassMod: 1, description: "\uAC04\uB2E8\uD55C \uAC00\uC8FD\uC73C\uB85C \uB9CC\uB4E0 \uAE30\uBCF8\uC801\uC778 \uAC11\uC637\uC785\uB2C8\uB2E4." },
+    shield: { id: "starter-buckler", name: "\uB098\uBB34 \uBC84\uD074\uB7EC", slot: "shield", rarity: "Common", iconSeed: "commonBuckler", classRequirement: ["Warrior"], armorClassMod: 1, description: "\uC791\uACE0 \uAC00\uBCBC\uC6B4 \uB098\uBB34 \uBC29\uD328\uC785\uB2C8\uB2E4." },
+    accessory: null
+  },
+  Archer: {
+    weapon: { id: "starter-shortbow", name: "\uC0AC\uB0E5\uC6A9 \uB2E8\uAD81", slot: "weapon", rarity: "Common", iconSeed: "commonShortbow", classRequirement: ["Archer"], weaponDamageDiceStrOverride: "1d6", description: "\uC0AC\uB0E5\uC5D0 \uC0AC\uC6A9\uB418\uB294 \uAC04\uB2E8\uD55C \uB2E8\uAD81\uC785\uB2C8\uB2E4." },
+    armor: { id: "starter-padded-armor", name: "\uB204\uBE44 \uAC11\uC637", slot: "armor", rarity: "Common", iconSeed: "commonPaddedArmor", classRequirement: ["Warrior", "Archer", "Mage"], armorClassMod: 1, description: "\uCC9C\uC744 \uC5EC\uB7EC\uACB9 \uB204\uBCBC \uB9CC\uB4E0 \uAC00\uBCBC\uC6B4 \uAC11\uC637\uC785\uB2C8\uB2E4." },
+    shield: null,
+    accessory: null
+  },
+  Mage: {
+    weapon: { id: "starter-staff", name: "\uACAC\uC2B5\uC0DD \uC9C0\uD321\uC774", slot: "weapon", rarity: "Common", iconSeed: "commonStaff", classRequirement: ["Mage"], weaponDamageDiceStrOverride: "1d4", damageBonusMod: 1, description: "\uB9C8\uBC95 \uACAC\uC2B5\uC0DD\uC774 \uC0AC\uC6A9\uD558\uB294 \uC9C0\uD321\uC774\uC785\uB2C8\uB2E4." },
+    armor: { id: "starter-robes", name: "\uD3C9\uBC94\uD55C \uB85C\uBE0C", slot: "armor", rarity: "Common", iconSeed: "commonRobes", classRequirement: ["Mage"], armorClassMod: 0, description: "\uD2B9\uBCC4\uD55C \uB2A5\uB825 \uC5C6\uB294 \uD3C9\uBC94\uD55C \uB85C\uBE0C\uC785\uB2C8\uB2E4." },
+    shield: null,
+    accessory: null
+  }
+};
+var MAX_INVENTORY_SIZE = 32;
+var INITIAL_NG_PLUS_LEVEL = 0;
+var INITIAL_PLAYER_PARTY_STATE = {
+  members: INITIAL_PARTY_MEMBERS_CONFIG.map((config) => {
+    const member = {
+      ...config,
+      level: 1,
+      xp: 0,
+      xpToNextLevel: 80,
+      currentHealth: config.baseMaxHealth,
+      equipment: {
+        weapon: COMMON_STARTER_EQUIPMENT[config.className]?.weapon || null,
+        armor: COMMON_STARTER_EQUIPMENT[config.className]?.armor || null,
+        shield: COMMON_STARTER_EQUIPMENT[config.className]?.shield || null,
+        accessory: COMMON_STARTER_EQUIPMENT[config.className]?.accessory || null
+      },
+      lastAttackTime: 0
+    };
+    if (config.className === "Archer")
+      member.xpToNextLevel = 100;
+    if (config.className === "Mage")
+      member.xpToNextLevel = 120;
+    return member;
+  }),
+  gold: 100,
+  partyAttackUpgradeLevel: 0,
+  partyDefenseUpgradeLevel: 0,
+  partyMaxHealthUpgradeLevel: 0,
+  partyAttackSpeedUpgradeLevel: 0,
+  inventory: [
+    // 테스트용 아이템 추가
+    {
+      id: "test-item-1",
+      name: "\uD14C\uC2A4\uD2B8 \uAC80",
+      slot: "weapon",
+      rarity: "Common",
+      iconSeed: "testSword",
+      classRequirement: ["Warrior"],
+      weaponDamageDiceStrOverride: "1d6",
+      attackBonusMod: 1,
+      description: "\uD14C\uC2A4\uD2B8\uC6A9 \uC544\uC774\uD15C\uC785\uB2C8\uB2E4. \uD310\uB9E4\uD574\uBCF4\uC138\uC694!"
+    },
+    {
+      id: "test-item-2",
+      name: "\uD14C\uC2A4\uD2B8 \uAC11\uC637",
+      slot: "armor",
+      rarity: "Uncommon",
+      iconSeed: "testArmor",
+      classRequirement: ["Warrior", "Archer"],
+      armorClassMod: 2,
+      description: "\uD14C\uC2A4\uD2B8\uC6A9 \uAC11\uC637\uC785\uB2C8\uB2E4. \uD310\uB9E4\uD574\uBCF4\uC138\uC694!"
+    },
+    {
+      id: "test-item-3",
+      name: "\uD14C\uC2A4\uD2B8 \uBC29\uD328",
+      slot: "shield",
+      rarity: "Rare",
+      iconSeed: "testShield",
+      classRequirement: ["Warrior"],
+      armorClassMod: 3,
+      description: "\uD14C\uC2A4\uD2B8\uC6A9 \uBC29\uD328\uC785\uB2C8\uB2E4. \uD310\uB9E4\uD574\uBCF4\uC138\uC694!"
+    }
+  ],
+  MAX_INVENTORY_SIZE,
+  ngPlusLevel: INITIAL_NG_PLUS_LEVEL
+  // Initialize NG+ level
+};
+INITIAL_PLAYER_PARTY_STATE.members.forEach((member) => {
+  let initialMaxHealth = member.baseMaxHealth;
+  if (member.equipment.armor?.maxHealthMod)
+    initialMaxHealth += member.equipment.armor.maxHealthMod;
+  if (member.equipment.accessory?.maxHealthMod)
+    initialMaxHealth += member.equipment.accessory.maxHealthMod;
+  member.currentHealth = initialMaxHealth;
+});
+var BASE_ENEMY_HEALTH = 60;
+var BASE_ENEMY_ATTACK = 10;
+var BASE_ENEMY_DEFENSE = 4;
+var BASE_ENEMY_WEAPON_DAMAGE_DICE_STR = "1d6";
+var BASE_ENEMY_GOLD_REWARD = 10;
+var BASE_ENEMY_XP_REWARD = 15;
+var ENEMY_HEALTH_STAGE_SCALE = 1.35;
+var ENEMY_STAT_STAGE_SCALE = 1.22;
+var ENEMY_REWARD_STAGE_SCALE = 1.25;
+var XP_TO_NEXT_LEVEL_MULTIPLIER_MEMBER = 1.3;
+var STAT_INCREASE_PER_MEMBER_LEVEL = {
+  maxHealth: 15,
+  // 레벨당 체력 증가량 증가 (10 -> 15)
+  attack: 2,
+  // 레벨당 공격력 증가량 증가 (1 -> 2)
+  defense: 1
+  // 방어력은 유지
+};
+var UPGRADE_CONFIGS = {
+  ["attack" /* Attack */]: { baseCost: 30, scaleFactor: 1.18, statIncrement: 0, statIncrementAttackBonus: 0.25, statIncrementDamageBonus: 0.35, name: "\uD30C\uD2F0 \uC804\uD22C \uD6C8\uB828", description: "\uBAA8\uB4E0 \uD30C\uD2F0\uC6D0\uC758 \uBA85\uC911\uB960\uACFC \uD53C\uD574\uB7C9 \uBCF4\uB108\uC2A4 \uC99D\uAC00" },
+  ["defense" /* Defense */]: { baseCost: 25, scaleFactor: 1.2, statIncrement: 0, statIncrementAC: 0.3, name: "\uD30C\uD2F0 \uBC29\uD638 \uAC15\uD654", description: "\uBAA8\uB4E0 \uD30C\uD2F0\uC6D0\uC758 \uBC29\uC5B4 \uB4F1\uAE09(AC) \uC99D\uAC00" },
+  ["maxHealth" /* MaxHealth */]: { baseCost: 18, scaleFactor: 1.12, statIncrement: 15, name: "\uD30C\uD2F0 \uD65C\uB825 \uC99D\uC9C4", description: "\uBAA8\uB4E0 \uD30C\uD2F0\uC6D0\uC758 \uCD5C\uB300 \uCCB4\uB825 \uC99D\uAC00" },
+  ["attackSpeed" /* AttackSpeed */]: { baseCost: 120, scaleFactor: 1.3, statIncrement: 0.04, maxLevel: 50, name: "\uD30C\uD2F0 \uC2E0\uC18D\uD568 \uBD80\uC5EC", description: "\uBAA8\uB4E0 \uD30C\uD2F0\uC6D0\uC758 \uACF5\uACA9 \uC18D\uB3C4 \uC99D\uAC00" }
+};
+var ENEMY_NAMES = [
+  "\uD649\uACE0\uBE14\uB9B0 \uC815\uCC30\uBCD1",
+  "\uAD76\uC8FC\uB9B0 \uB291\uB300",
+  "\uD574\uACE8 \uBCD1\uC0AC",
+  "\uB3C5\uCE68 \uAC70\uBBF8",
+  "\uCF54\uBCFC\uD2B8 \uD568\uC815\uAFBC",
+  "\uC624\uD06C \uB3CC\uACA9\uBCD1",
+  "\uADF8\uB9BC\uC790 \uC0B4\uCFA1\uC774",
+  "\uB2AA\uC9C0 \uAD34\uBB3C",
+  "\uAD11\uC2E0\uB3C4 \uC218\uB828\uC0DD",
+  "\uACE0\uBE14\uB9B0 \uC8FC\uC220\uC0AC",
+  "\uB180 \uC804\uC0AC",
+  "\uB3D9\uAD74 \uD2B8\uB864",
+  "\uC5ED\uBCD1 \uAD6C\uC6B8",
+  "\uBB34\uC1E0\uAC00\uC8FD \uBA67\uB3FC\uC9C0",
+  "\uC800\uC8FC\uBC1B\uC740 \uB9DD\uB839"
+];
+var GAME_TICK_INTERVAL_MS = 100;
+var ENEMY_ATTACK_INTERVAL_MS = 2500;
+var MAX_LOG_MESSAGES = 100;
+var PARTY_MEMBER_HEALTH_REGEN_PERCENT_PER_SECOND = 1;
+var UPGRADE_ICONS = {
+  ["attack" /* Attack */]: AttackIcon,
+  ["defense" /* Defense */]: DefenseIcon,
+  ["maxHealth" /* MaxHealth */]: HealthIcon,
+  ["attackSpeed" /* AttackSpeed */]: AttackSpeedIcon
+};
+var IDLE_RPG_SAVE_KEY = "idleRPGPartyDnDSaveData_v3_ngplus";
+var AUTO_SAVE_INTERVAL_MS = 6e4;
+var AUTO_UPGRADE_INTERVAL_MS = 2e3;
+var BOSS_BATTLE_THRESHOLD = 8;
+var BOSS_NAME_PREFIX = "[\uC6B0\uB450\uBA38\uB9AC] ";
+var BOSS_STATS_MULTIPLIERS = {
+  health: 3.5,
+  // 보스 체력 배율 하향 조정 (4.0 -> 3.5)
+  attack: 1.3,
+  defense: 1.3,
+  goldReward: 6,
+  // 보스 골드 보상 증가 (5 -> 6)
+  xpReward: 6
+  // 보스 XP 보상 증가 (5 -> 6)
+};
+var PARTY_WIPE_REVIVAL_DELAY_MS = 1e4;
+var PARTY_WIPE_REVIVAL_HEALTH_PERCENT = 0.5;
+var BASE_AC = 10;
+var CRITICAL_HIT_ROLL = 20;
+var CRITICAL_MISS_ROLL = 1;
+var EQUIPMENT_SLOTS_ORDER = ["weapon", "armor", "shield", "accessory"];
+var BASE_LOOT_DROP_CHANCE = 0.2;
+var BOSS_LOOT_DROP_CHANCE_MULTIPLIER = 3;
+var RARITY_WEIGHTS = {
+  Common: 55,
+  // 일반 아이템 가중치 감소 (60 -> 55)
+  Uncommon: 28,
+  // 고급 아이템 가중치 증가 (25 -> 28)
+  Rare: 12,
+  // 희귀 아이템 가중치 증가 (10 -> 12)
+  Epic: 5
+  // 에픽 가중치 유지
+};
+var STAGE_RARITY_BONUS_THRESHOLD = 8;
+var FINAL_STAGE_FOR_NG_PLUS = 30;
+var NG_PLUS_ENEMY_HEALTH_ADDITIVE_MULTIPLIER_PER_LEVEL = 0.65;
+var NG_PLUS_ENEMY_STAT_ADDITIVE_MULTIPLIER_PER_LEVEL = 0.45;
+var NG_PLUS_REWARD_ADDITIVE_MULTIPLIER_PER_LEVEL = 0.3;
+
+// utils/formatters.ts
+var formatNumber = (num, precision = 1) => {
+  const numAbs = Math.abs(num);
+  if (numAbs < 1e3)
+    return num.toFixed(0);
+  if (numAbs < 1e6)
+    return (num / 1e3).toFixed(precision) + "K";
+  if (numAbs < 1e9)
+    return (num / 1e6).toFixed(precision) + "M";
+  if (numAbs < 1e12)
+    return (num / 1e9).toFixed(precision) + "B";
+  if (numAbs < 1e15)
+    return (num / 1e12).toFixed(precision) + "T";
+  return (num / 1e15).toFixed(precision) + "Q";
+};
+
+// components/ProgressBar.tsx
+import { jsx as jsx2, jsxs as jsxs2 } from "react/jsx-runtime";
+var ProgressBar = ({ current, max, colorClass, label, showValue = true }) => {
+  const percentage = max > 0 ? current / max * 100 : 0;
+  return /* @__PURE__ */ jsxs2("div", { className: "w-full", children: [
+    label && /* @__PURE__ */ jsx2("div", { className: "text-xs text-slate-400 mb-1", children: label }),
+    /* @__PURE__ */ jsxs2("div", { className: "h-6 w-full bg-slate-700 rounded-md overflow-hidden relative border border-slate-600", children: [
+      /* @__PURE__ */ jsx2(
+        "div",
+        {
+          className: `h-full transition-all duration-300 ease-out ${colorClass}`,
+          style: { width: `${Math.max(0, Math.min(100, percentage))}%` }
+        }
+      ),
+      showValue && /* @__PURE__ */ jsxs2("div", { className: "absolute inset-0 flex items-center justify-center text-xs font-semibold text-white mix-blend-difference px-2", children: [
+        formatNumber(current, 0),
+        " / ",
+        formatNumber(max, 0),
+        " (",
+        percentage.toFixed(0),
+        "%)"
+      ] })
+    ] })
+  ] });
+};
+
+// utils/diceRoller.ts
+var rollDice = (count, sides) => {
+  let total = 0;
+  for (let i = 0; i < count; i++) {
+    total += Math.floor(Math.random() * sides) + 1;
+  }
+  return total;
+};
+var parseDiceString = (diceStr) => {
+  const match = diceStr.toLowerCase().match(/^(\d+)d(\d+)$/);
+  if (match) {
+    const count = parseInt(match[1], 10);
+    const sides = parseInt(match[2], 10);
+    if (count > 0 && sides > 0) {
+      return { count, sides };
+    }
+  }
+  return null;
+};
+var rollD20 = () => {
+  return Math.floor(Math.random() * 20) + 1;
+};
+
+// components/FloatingTextEffect.tsx
+import { useEffect, useRef } from "react";
+import { jsx as jsx3 } from "react/jsx-runtime";
+var FloatingTextEffect = ({ instance, onAnimationComplete }) => {
+  const elementRef = useRef(null);
+  useEffect(() => {
+    const currentElement = elementRef.current;
+    const handleAnimationEnd = () => {
+      onAnimationComplete(instance.id);
+    };
+    if (currentElement) {
+      currentElement.addEventListener("animationend", handleAnimationEnd);
+    }
+    return () => {
+      if (currentElement) {
+        currentElement.removeEventListener("animationend", handleAnimationEnd);
+      }
+    };
+  }, [instance.id, onAnimationComplete]);
+  let colorClass = "";
+  switch (instance.colorType) {
+    case "damage":
+      colorClass = "floating-text-damage";
+      break;
+    case "crit_damage":
+      colorClass = "floating-text-crit";
+      break;
+    case "miss":
+      colorClass = "floating-text-miss";
+      break;
+    case "heal":
+      colorClass = "floating-text-heal";
+      break;
+    case "ko":
+      colorClass = "floating-text-ko";
+      break;
+    case "info":
+      colorClass = "bg-sky-500/80 text-white border-sky-300/50";
+      break;
+    default:
+      colorClass = "bg-slate-500/80 text-white border-slate-300/50";
+  }
+  const xPos = `calc(50% + ${instance.offsetX}px)`;
+  const yPos = `calc(50% + ${instance.offsetY}px)`;
+  return /* @__PURE__ */ jsx3(
+    "div",
+    {
+      ref: elementRef,
+      className: `floating-text-effect ${colorClass}`,
+      style: {
+        left: xPos,
+        top: yPos,
+        transform: "translateX(-50%) translateY(-50%)"
+        // Center the text initially then animation takes over
+      },
+      children: instance.text
+    }
+  );
+};
+var FloatingTextEffect_default = FloatingTextEffect;
+
+// utils/equipmentUtils.ts
+var getEquipmentEffectValue = (item, effectKey, defaultValue = 0) => {
+  if (!item)
+    return defaultValue;
+  const value = item[effectKey];
+  return typeof value === "number" ? value : defaultValue;
+};
+var isItemEquippable = (item, memberClassName, targetSlot) => {
+  if (item.slot !== targetSlot) {
+    return false;
+  }
+  if (item.classRequirement && !item.classRequirement.includes(memberClassName)) {
+    return false;
+  }
+  if (targetSlot === "shield" && memberClassName === "Mage")
+    return false;
+  if (targetSlot === "shield" && memberClassName === "Archer")
+    return false;
+  if (targetSlot === "armor" && item.name.toLowerCase().includes("\uD310\uAE08") && memberClassName === "Mage")
+    return false;
+  return true;
+};
+var getSlotDisplayName = (slot) => {
+  switch (slot) {
+    case "weapon":
+      return "\uBB34\uAE30";
+    case "armor":
+      return "\uAC11\uC637";
+    case "shield":
+      return "\uBC29\uD328";
+    case "accessory":
+      return "\uC7A5\uC2E0\uAD6C";
+    default:
+      return "\uC54C \uC218 \uC5C6\uC74C";
+  }
+};
+var getRarityColorClass = (rarity, type = "border") => {
+  if (!rarity)
+    return type === "text" ? "text-slate-400" : type === "bg" ? "bg-slate-700" : "border-slate-600";
+  switch (rarity) {
+    case "Common":
+      return type === "text" ? "text-slate-300" : type === "bg" ? "bg-slate-600" : "border-slate-500";
+    case "Uncommon":
+      return type === "text" ? "text-green-400" : type === "bg" ? "bg-green-700/30" : "border-green-500";
+    case "Rare":
+      return type === "text" ? "text-sky-400" : type === "bg" ? "bg-sky-700/30" : "border-sky-500";
+    case "Epic":
+      return type === "text" ? "text-purple-400" : type === "bg" ? "bg-purple-700/30" : "border-purple-500";
+    default:
+      return type === "text" ? "text-slate-400" : type === "bg" ? "bg-slate-700" : "border-slate-600";
+  }
+};
+
+// components/CharacterPanel.tsx
+import { Fragment, jsx as jsx4, jsxs as jsxs3 } from "react/jsx-runtime";
+var PartyMemberCard = ({
+  member,
+  effectiveStats,
+  currentStage,
+  onRecruitMember,
+  floatingTexts,
+  onFloatingTextAnimationComplete,
+  onOpenEquipmentModal
+}) => {
+  const canBeRecruited = member.unlockStageRequirement && currentStage >= member.unlockStageRequirement;
+  const formatDamageString = (diceStr, bonus) => {
+    const diceParts = parseDiceString(diceStr);
+    if (!diceParts)
+      return `Bonus: ${bonus}`;
+    return `${diceParts.count}d${diceParts.sides} + ${bonus}`;
+  };
+  const getSlotIcon = (slot, className) => {
+    const defaultClass = "w-5 h-5 text-slate-400 group-hover:text-sky-300";
+    const effectiveClass = `${className || ""} ${defaultClass}`;
+    switch (slot) {
+      case "weapon":
+        return /* @__PURE__ */ jsx4(WeaponSlotIcon, { className: effectiveClass });
+      case "armor":
+        return /* @__PURE__ */ jsx4(ArmorSlotIcon, { className: effectiveClass });
+      case "shield":
+        return /* @__PURE__ */ jsx4(ShieldSlotIcon, { className: effectiveClass });
+      case "accessory":
+        return /* @__PURE__ */ jsx4(AccessorySlotIcon, { className: effectiveClass });
+      default:
+        return null;
+    }
+  };
+  return /* @__PURE__ */ jsxs3("div", { className: `relative p-3 rounded-lg shadow-md border ${member.isActiveInCombat && member.isUnlocked ? "bg-slate-700 border-sky-600/50" : "bg-slate-600/70 border-slate-500/50"} ${!member.isUnlocked ? "opacity-70" : ""}`, children: [
+    floatingTexts.map((ft) => /* @__PURE__ */ jsx4(FloatingTextEffect_default, { instance: ft, onAnimationComplete: onFloatingTextAnimationComplete }, ft.id)),
+    /* @__PURE__ */ jsxs3("div", { className: "flex items-center mb-2", children: [
+      /* @__PURE__ */ jsx4("img", { src: `https://picsum.photos/seed/${member.avatarSeed}/40/40`, alt: member.name, className: "w-10 h-10 rounded-full mr-3 border-2 border-slate-500" }),
+      /* @__PURE__ */ jsxs3("div", { children: [
+        /* @__PURE__ */ jsxs3("h4", { className: `font-semibold ${member.isUnlocked ? "text-sky-300" : "text-slate-400"}`, children: [
+          member.name,
+          " ",
+          /* @__PURE__ */ jsxs3("span", { className: "text-xs text-slate-500", children: [
+            "(",
+            member.className,
+            ")"
+          ] })
+        ] }),
+        member.isUnlocked ? /* @__PURE__ */ jsxs3("p", { className: "text-xs text-slate-400", children: [
+          "\uB808\uBCA8: ",
+          member.level
+        ] }) : /* @__PURE__ */ jsx4("p", { className: "text-xs text-slate-400", children: "\uBBF8\uC601\uC785" })
+      ] })
+    ] }),
+    !member.isUnlocked && member.unlockStageRequirement && /* @__PURE__ */ jsx4("div", { className: "my-2", children: canBeRecruited ? /* @__PURE__ */ jsxs3("button", { onClick: () => onRecruitMember(member.id), className: "w-full bg-green-600 hover:bg-green-500 text-white text-xs py-1.5 rounded-md transition-colors", children: [
+      "\uC601\uC785\uD558\uAE30 (\uC2A4\uD14C\uC774\uC9C0 ",
+      member.unlockStageRequirement,
+      " \uB2EC\uC131)"
+    ] }) : /* @__PURE__ */ jsxs3("p", { className: "text-xs text-center text-slate-400 italic", children: [
+      "\uC2A4\uD14C\uC774\uC9C0 ",
+      member.unlockStageRequirement,
+      " \uB3C4\uB2EC \uC2DC \uC601\uC785 \uAC00\uB2A5"
+    ] }) }),
+    member.isUnlocked && /* @__PURE__ */ jsxs3(Fragment, { children: [
+      /* @__PURE__ */ jsx4(ProgressBar, { current: member.currentHealth, max: effectiveStats.maxHealth, colorClass: member.isActiveInCombat ? "bg-green-500" : "bg-red-600", label: "\uCCB4\uB825" }),
+      /* @__PURE__ */ jsx4(ProgressBar, { current: member.xp, max: member.xpToNextLevel, colorClass: "bg-sky-500", label: "\uACBD\uD5D8\uCE58" }),
+      /* @__PURE__ */ jsxs3("div", { className: "mt-2.5 mb-1.5", children: [
+        /* @__PURE__ */ jsx4("p", { className: "text-xs text-slate-400 mb-1", children: "\uC7A5\uBE44:" }),
+        /* @__PURE__ */ jsx4("div", { className: "grid grid-cols-4 gap-1.5", children: EQUIPMENT_SLOTS_ORDER.map((slot) => {
+          const item = member.equipment[slot];
+          if (slot === "shield" && member.className !== "Warrior" && !item)
+            return null;
+          return /* @__PURE__ */ jsxs3(
+            "button",
+            {
+              onClick: () => onOpenEquipmentModal(member.id, slot),
+              title: item ? `${item.name} (${item.rarity})
+${getSlotDisplayName(slot)}
+${item.description}` : `${getSlotDisplayName(slot)} \uC2AC\uB86F \uBE44\uC5B4\uC788\uC74C`,
+              className: `relative group aspect-square rounded-md flex items-center justify-center border-2 transition-colors hover:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-300
+                                ${item ? getRarityColorClass(item.rarity, "border") : "border-slate-600 bg-slate-700/50 hover:bg-slate-600/50"}
+                                ${item ? getRarityColorClass(item.rarity, "bg") : ""}`,
+              children: [
+                item ? /* @__PURE__ */ jsx4("img", { src: `https://picsum.photos/seed/${item.iconSeed}/30/30`, alt: item.name, className: "w-5 h-5 object-cover rounded-sm" }) : getSlotIcon(slot),
+                item && /* @__PURE__ */ jsx4("span", { className: `absolute -top-0.5 -right-0.5 px-0.5 text-[7px] rounded-sm ${getRarityColorClass(item.rarity, "bg")} ${getRarityColorClass(item.rarity, "text")} bg-opacity-80 border ${getRarityColorClass(item.rarity, "border")}`, children: item.rarity.substring(0, 1) })
+              ]
+            },
+            slot
+          );
+        }) })
+      ] }),
+      /* @__PURE__ */ jsxs3("div", { className: "mt-2 space-y-1 text-xs", children: [
+        /* @__PURE__ */ jsxs3("div", { className: "flex justify-between text-slate-300", children: [
+          /* @__PURE__ */ jsx4("span", { children: "\uBA85\uC911 \uBCF4\uB108\uC2A4:" }),
+          " ",
+          /* @__PURE__ */ jsxs3("span", { className: "font-medium text-slate-100", children: [
+            "+",
+            effectiveStats.attackBonus
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs3("div", { className: "flex justify-between text-slate-300", children: [
+          /* @__PURE__ */ jsx4("span", { children: "\uD53C\uD574\uB7C9:" }),
+          " ",
+          /* @__PURE__ */ jsx4("span", { className: "font-medium text-slate-100", children: formatDamageString(effectiveStats.weaponDamageDiceStr, effectiveStats.damageBonus) })
+        ] }),
+        /* @__PURE__ */ jsxs3("div", { className: "flex justify-between text-slate-300", children: [
+          /* @__PURE__ */ jsx4("span", { children: "\uBC29\uC5B4 \uB4F1\uAE09 (AC):" }),
+          " ",
+          /* @__PURE__ */ jsx4("span", { className: "font-medium text-slate-100", children: effectiveStats.armorClass })
+        ] }),
+        /* @__PURE__ */ jsxs3("div", { className: "flex justify-between text-slate-300", children: [
+          /* @__PURE__ */ jsx4("span", { children: "\uACF5\uACA9 \uC18D\uB3C4:" }),
+          " ",
+          /* @__PURE__ */ jsxs3("span", { className: "font-medium text-slate-100", children: [
+            effectiveStats.attackSpeed.toFixed(2),
+            "/\uCD08"
+          ] })
+        ] }),
+        !member.isActiveInCombat && member.currentHealth <= 0 && /* @__PURE__ */ jsx4("p", { className: "text-center text-red-400 font-semibold mt-1", children: "\uC4F0\uB7EC\uC9D0!" })
+      ] })
+    ] })
+  ] });
+};
+var CharacterPanel = ({
+  playerParty,
+  currentStage,
+  onUpgrade,
+  getUpgradeCost,
+  getEffectiveMemberStats,
+  onRecruitMember,
+  isAutoUpgradeEnabled,
+  onToggleAutoUpgrade,
+  floatingTexts,
+  onFloatingTextAnimationComplete,
+  onOpenEquipmentModal
+}) => {
+  const { members, gold } = playerParty;
+  return /* @__PURE__ */ jsxs3("div", { className: "bg-slate-800 p-4 rounded-lg shadow-xl border border-slate-700 h-full flex flex-col", children: [
+    /* @__PURE__ */ jsx4("h2", { className: "text-xl font-bold mb-3 text-center text-sky-400", children: "\uD30C\uD2F0 \uC815\uBCF4" }),
+    /* @__PURE__ */ jsx4("div", { className: "space-y-3 mb-4 overflow-y-auto flex-grow pr-1 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-700", children: members.map((member) => /* @__PURE__ */ jsx4(
+      PartyMemberCard,
+      {
+        member,
+        effectiveStats: getEffectiveMemberStats(member, playerParty),
+        currentStage,
+        onRecruitMember,
+        floatingTexts: floatingTexts.filter((ft) => ft.targetId === member.id),
+        onFloatingTextAnimationComplete,
+        onOpenEquipmentModal
+      },
+      member.id
+    )) }),
+    /* @__PURE__ */ jsxs3("div", { className: "mt-auto", children: [
+      /* @__PURE__ */ jsxs3("div", { className: "mb-3 py-2 px-3 rounded-md bg-yellow-500/10 border border-yellow-500/30 flex justify-between items-center", children: [
+        /* @__PURE__ */ jsxs3("div", { className: "flex items-center text-sm text-yellow-300", children: [
+          /* @__PURE__ */ jsx4(GoldIcon, { className: "w-5 h-5 mr-2 text-yellow-400" }),
+          "\uACE8\uB4DC:"
+        ] }),
+        /* @__PURE__ */ jsx4("div", { className: "text-lg font-semibold text-yellow-200", children: formatNumber(gold) })
+      ] }),
+      /* @__PURE__ */ jsxs3("div", { className: "flex justify-between items-center mb-2 pt-3 border-t border-slate-700", children: [
+        /* @__PURE__ */ jsx4("h3", { className: "text-lg font-semibold text-sky-400", children: "\uD30C\uD2F0 \uAC15\uD654" }),
+        /* @__PURE__ */ jsxs3("button", { onClick: onToggleAutoUpgrade, className: `px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${isAutoUpgradeEnabled ? "bg-green-600 hover:bg-green-500 text-white" : "bg-slate-600 hover:bg-slate-500 text-slate-300"}`, title: isAutoUpgradeEnabled ? "\uC790\uB3D9 \uAC15\uD654 \uB044\uAE30" : "\uC790\uB3D9 \uAC15\uD654 \uCF1C\uAE30", children: [
+          "\uC790\uB3D9 \uAC15\uD654: ",
+          isAutoUpgradeEnabled ? "\uCF2C" : "\uB054"
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx4("div", { className: "grid grid-cols-2 gap-2 mt-1", children: Object.keys(UPGRADE_CONFIGS).map((type) => {
+        const config = UPGRADE_CONFIGS[type];
+        const cost = getUpgradeCost(type);
+        const IconComponent = UPGRADE_ICONS[type];
+        let currentUpgradeLevel;
+        switch (type) {
+          case "attack" /* Attack */:
+            currentUpgradeLevel = playerParty.partyAttackUpgradeLevel;
+            break;
+          case "defense" /* Defense */:
+            currentUpgradeLevel = playerParty.partyDefenseUpgradeLevel;
+            break;
+          case "maxHealth" /* MaxHealth */:
+            currentUpgradeLevel = playerParty.partyMaxHealthUpgradeLevel;
+            break;
+          case "attackSpeed" /* AttackSpeed */:
+            currentUpgradeLevel = playerParty.partyAttackSpeedUpgradeLevel;
+            break;
+          default:
+            currentUpgradeLevel = 0;
+        }
+        const isMaxLevel = config.maxLevel !== void 0 && currentUpgradeLevel >= config.maxLevel;
+        const canAfford = playerParty.gold >= cost;
+        return /* @__PURE__ */ jsxs3(
+          "button",
+          {
+            onClick: () => onUpgrade(type),
+            disabled: !canAfford || isMaxLevel,
+            title: `${config.name}: ${config.description}
+\uD604\uC7AC \uB808\uBCA8: ${currentUpgradeLevel}${config.maxLevel ? `/${config.maxLevel}` : ""}
+\uBE44\uC6A9: ${formatNumber(cost)} \uACE8\uB4DC`,
+            className: `w-full p-2 rounded-md text-sm font-medium transition-all duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-sky-500 ${isMaxLevel ? "bg-slate-600 text-slate-400 cursor-not-allowed" : canAfford ? "bg-sky-600 hover:bg-sky-500 text-white" : "bg-slate-700 text-slate-500 cursor-not-allowed"}`,
+            children: [
+              /* @__PURE__ */ jsxs3("div", { className: "flex items-center justify-center", children: [
+                IconComponent && /* @__PURE__ */ jsx4(IconComponent, { className: "w-4 h-4 mr-2" }),
+                " ",
+                /* @__PURE__ */ jsx4("span", { children: config.name })
+              ] }),
+              /* @__PURE__ */ jsxs3("div", { className: "text-xs mt-0.5", children: [
+                "Lv.",
+                currentUpgradeLevel,
+                config.maxLevel ? `/${config.maxLevel}` : ""
+              ] }),
+              /* @__PURE__ */ jsx4("div", { className: "text-xs", children: isMaxLevel ? "\uCD5C\uB300 \uB808\uBCA8" : `\uBE44\uC6A9: ${formatNumber(cost)}` })
+            ]
+          },
+          type
+        );
+      }) })
+    ] })
+  ] });
+};
+
+// components/AnimatedDiceRollDisplay.tsx
+import { useState, useEffect as useEffect2 } from "react";
+import { Fragment as Fragment2, jsx as jsx5, jsxs as jsxs4 } from "react/jsx-runtime";
+var AnimatedDiceRollDisplay = ({ displayInfo }) => {
+  const [animatedD20, setAnimatedD20] = useState(1);
+  const [showDetails, setShowDetails] = useState(false);
+  useEffect2(() => {
+    if (displayInfo && displayInfo.isVisible) {
+      setShowDetails(false);
+      let currentAnimatedVal = 1;
+      const animationIntervalTime = 50;
+      const totalAnimationDuration = 700;
+      let elapsed = 0;
+      const intervalId = setInterval(() => {
+        elapsed += animationIntervalTime;
+        currentAnimatedVal = Math.floor(Math.random() * 20) + 1;
+        setAnimatedD20(currentAnimatedVal);
+        if (elapsed >= totalAnimationDuration) {
+          clearInterval(intervalId);
+          setAnimatedD20(displayInfo.d20Roll);
+          setShowDetails(true);
+        }
+      }, animationIntervalTime);
+      return () => clearInterval(intervalId);
+    }
+  }, [displayInfo]);
+  if (!displayInfo || !displayInfo.isVisible) {
+    return null;
+  }
+  const { attackerName, targetName, d20Roll, bonus, totalToHit, targetAC, resultType } = displayInfo;
+  let resultText = "";
+  let resultColorClass = "";
+  switch (resultType) {
+    case "crit_hit":
+      resultText = "\uCE58\uBA85\uD0C0!";
+      resultColorClass = "text-yellow-300";
+      break;
+    case "hit":
+      resultText = "\uBA85\uC911!";
+      resultColorClass = "text-green-400";
+      break;
+    case "miss":
+      resultText = "\uBE57\uB098\uAC10!";
+      resultColorClass = "text-slate-400";
+      break;
+    case "crit_miss":
+      resultText = "\uB300\uC2E4\uD328!";
+      resultColorClass = "text-red-400";
+      break;
+  }
+  return /* @__PURE__ */ jsxs4(
+    "div",
+    {
+      className: `dice-roll-display visible z-10 bg-slate-800/80 backdrop-blur-sm p-3 rounded-lg shadow-lg border border-slate-600 w-full max-w-[200px] md:max-w-xs text-center transition-all duration-300`,
+      children: [
+        /* @__PURE__ */ jsxs4("div", { className: "mb-1 md:mb-2 text-xs md:text-sm", children: [
+          /* @__PURE__ */ jsx5("span", { className: "font-semibold text-sky-400 truncate max-w-[70px] inline-block", children: attackerName }),
+          /* @__PURE__ */ jsx5("span", { className: "text-slate-400 mx-0.5", children: "\u2192" }),
+          /* @__PURE__ */ jsx5("span", { className: "font-semibold text-red-400 truncate max-w-[70px] inline-block", children: targetName })
+        ] }),
+        /* @__PURE__ */ jsxs4("div", { className: "text-2xl sm:text-3xl md:text-4xl font-bold my-1 md:my-2 text-white flex items-center justify-center space-x-1 md:space-x-2", children: [
+          /* @__PURE__ */ jsx5("span", { className: "block w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-slate-900 rounded-md flex items-center justify-center border-2 border-sky-500 shadow-inner", children: animatedD20 }),
+          showDetails && /* @__PURE__ */ jsxs4(Fragment2, { children: [
+            /* @__PURE__ */ jsx5("span", { className: "text-xl sm:text-2xl md:text-3xl text-slate-500", children: "+" }),
+            /* @__PURE__ */ jsx5("span", { className: "block w-8 h-8 sm:w-10 sm:h-10 md:w-10 md:h-10 text-lg sm:text-xl md:text-2xl bg-slate-700 rounded-md flex items-center justify-center border border-slate-600", children: bonus }),
+            /* @__PURE__ */ jsx5("span", { className: "text-xl sm:text-2xl md:text-3xl text-slate-500", children: "=" }),
+            /* @__PURE__ */ jsx5("span", { className: `block w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-slate-900 rounded-md flex items-center justify-center border-2 ${totalToHit >= targetAC && resultType !== "crit_miss" ? "border-green-500" : "border-red-500"} shadow-inner`, children: totalToHit })
+          ] })
+        ] }),
+        showDetails && /* @__PURE__ */ jsxs4(Fragment2, { children: [
+          /* @__PURE__ */ jsxs4("p", { className: "text-[10px] sm:text-xs text-slate-400 mb-1 leading-tight", children: [
+            "(\uB864: ",
+            d20Roll,
+            " + \uBCF4\uB108\uC2A4: ",
+            bonus,
+            " = ",
+            /* @__PURE__ */ jsx5("span", { className: "font-bold text-slate-200", children: totalToHit }),
+            ") vs AC: ",
+            /* @__PURE__ */ jsx5("span", { className: "font-bold text-slate-200", children: targetAC })
+          ] }),
+          /* @__PURE__ */ jsx5("p", { className: `text-md sm:text-lg md:text-xl font-bold ${resultColorClass}`, children: resultText })
+        ] }),
+        !showDetails && /* @__PURE__ */ jsx5("p", { className: "text-xs sm:text-sm text-slate-400 animate-pulse h-10 flex items-center justify-center", children: "\uC8FC\uC0AC\uC704 \uAD74\uB9AC\uB294 \uC911..." })
+      ]
+    },
+    displayInfo.key
+  );
+};
+var AnimatedDiceRollDisplay_default = AnimatedDiceRollDisplay;
+
+// components/EnemyPanel.tsx
+import { jsx as jsx6, jsxs as jsxs5 } from "react/jsx-runtime";
+var EnemyPanel = ({ enemyStats, floatingTexts, onFloatingTextAnimationComplete, diceRollDisplay }) => {
+  if (!enemyStats) {
+    return /* @__PURE__ */ jsxs5("div", { className: "bg-slate-800 p-4 rounded-lg shadow-xl border border-slate-700 h-full flex flex-col items-center justify-center", children: [
+      /* @__PURE__ */ jsx6("p", { className: "text-slate-400", children: "\uD604\uC7AC \uC801\uC774 \uC5C6\uC2B5\uB2C8\uB2E4..." }),
+      diceRollDisplay && diceRollDisplay.isVisible && /* @__PURE__ */ jsx6("div", { className: "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10", children: /* @__PURE__ */ jsx6(AnimatedDiceRollDisplay_default, { displayInfo: diceRollDisplay }) })
+    ] });
+  }
+  const {
+    name,
+    currentHealth,
+    maxHealth,
+    imageUrl,
+    goldReward,
+    xpReward,
+    isBoss,
+    armorClass,
+    attackBonus,
+    damageBonus,
+    weaponDamageDiceStr
+  } = enemyStats;
+  const formatDamageString = (diceStr, bonus) => {
+    const diceParts = parseDiceString(diceStr);
+    if (!diceParts)
+      return `Bonus: ${bonus}`;
+    return `${diceParts.count}d${diceParts.sides} + ${bonus}`;
+  };
+  const enemyFloatingTexts = floatingTexts.filter((ft) => ft.targetId === "enemy");
+  return /* @__PURE__ */ jsxs5("div", { className: "relative bg-slate-800 p-4 rounded-lg shadow-xl border-2 border-slate-700 h-full flex flex-col items-center", children: [
+    enemyFloatingTexts.map((ft) => /* @__PURE__ */ jsx6(
+      FloatingTextEffect_default,
+      {
+        instance: ft,
+        onAnimationComplete: onFloatingTextAnimationComplete
+      },
+      ft.id
+    )),
+    /* @__PURE__ */ jsx6("h2", { className: `text-xl font-bold mb-1 text-center ${isBoss ? "text-purple-400 animate-pulse" : "text-red-400"}`, children: name }),
+    isBoss && /* @__PURE__ */ jsx6("p", { className: "text-center text-sm text-purple-300 mb-2", children: "(\uAC15\uB825\uD55C \uC6B0\uB450\uBA38\uB9AC)" }),
+    /* @__PURE__ */ jsxs5("div", { className: "flex flex-col sm:flex-row items-center justify-center gap-x-2 sm:gap-x-4 my-3 w-full", children: [
+      /* @__PURE__ */ jsxs5("div", { className: "relative w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 flex-shrink-0", children: [
+        " ",
+        /* @__PURE__ */ jsx6(
+          "img",
+          {
+            src: imageUrl,
+            alt: name,
+            className: "w-full h-full object-cover rounded-lg border-2 border-slate-600 shadow-md",
+            onError: (e) => {
+              e.target.src = "https://picsum.photos/200";
+            }
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs5("div", { className: "w-full sm:w-auto mt-3 sm:mt-0 flex-grow sm:flex-grow-0 sm:max-w-[200px] md:max-w-xs", children: [
+        " ",
+        diceRollDisplay && diceRollDisplay.isVisible && /* @__PURE__ */ jsx6(AnimatedDiceRollDisplay_default, { displayInfo: diceRollDisplay })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsx6("div", { className: "w-full mb-3", children: /* @__PURE__ */ jsx6(ProgressBar, { current: currentHealth, max: maxHealth, colorClass: isBoss ? "bg-purple-600" : "bg-red-500", label: "\uCCB4\uB825" }) }),
+    /* @__PURE__ */ jsxs5("div", { className: "grid grid-cols-1 gap-2 text-sm w-full mb-3 text-slate-300", children: [
+      /* @__PURE__ */ jsxs5("div", { className: "bg-slate-700/50 p-2 rounded-md", children: [
+        "\uBA85\uC911 \uBCF4\uB108\uC2A4: ",
+        /* @__PURE__ */ jsxs5("span", { className: "font-semibold text-slate-100", children: [
+          "+",
+          attackBonus
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs5("div", { className: "bg-slate-700/50 p-2 rounded-md", children: [
+        "\uD53C\uD574\uB7C9: ",
+        /* @__PURE__ */ jsx6("span", { className: "font-semibold text-slate-100", children: formatDamageString(weaponDamageDiceStr, damageBonus) })
+      ] }),
+      /* @__PURE__ */ jsxs5("div", { className: "bg-slate-700/50 p-2 rounded-md", children: [
+        "\uBC29\uC5B4 \uB4F1\uAE09 (AC): ",
+        /* @__PURE__ */ jsx6("span", { className: "font-semibold text-slate-100", children: armorClass })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs5("div", { className: "mt-auto w-full pt-3 border-t border-slate-700", children: [
+      /* @__PURE__ */ jsx6("h3", { className: "text-sm font-semibold mb-1 text-center text-slate-400", children: "\uBCF4\uC0C1" }),
+      /* @__PURE__ */ jsxs5("div", { className: "flex justify-around text-sm", children: [
+        /* @__PURE__ */ jsxs5("div", { className: "flex items-center text-yellow-400", children: [
+          /* @__PURE__ */ jsx6(GoldIcon, { className: "w-4 h-4 mr-1" }),
+          " ",
+          formatNumber(goldReward)
+        ] }),
+        /* @__PURE__ */ jsxs5("div", { className: "flex items-center text-sky-400", children: [
+          /* @__PURE__ */ jsx6(XPIcon, { className: "w-4 h-4 mr-1" }),
+          " ",
+          formatNumber(xpReward)
+        ] })
+      ] })
+    ] })
+  ] });
+};
+
+// components/GameLog.tsx
+import { useRef as useRef2, useEffect as useEffect3 } from "react";
+import { jsx as jsx7, jsxs as jsxs6 } from "react/jsx-runtime";
+var getMessageColor = (type) => {
+  switch (type) {
+    case "combat":
+      return "text-slate-300";
+    case "crit":
+      return "text-yellow-400 font-semibold";
+    case "reward":
+      return "text-green-400";
+    case "system":
+      return "text-sky-400";
+    case "error":
+      return "text-red-400";
+    case "save":
+      return "text-purple-400 italic";
+    case "party":
+      return "text-indigo-400";
+    case "dice":
+      return "text-slate-500 italic text-xs";
+    default:
+      return "text-slate-400";
+  }
+};
+var GameLog = ({ messages }) => {
+  const logContainerRef = useRef2(null);
+  useEffect3(() => {
+    if (logContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = logContainerRef.current;
+      const isScrolledToBottom = scrollHeight - scrollTop - clientHeight < 50;
+      if (isScrolledToBottom || messages.length <= 10) {
+        logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+      }
+    }
+  }, [messages]);
+  return /* @__PURE__ */ jsxs6("div", { ref: logContainerRef, className: "bg-slate-800 p-3 rounded-lg shadow-xl border border-slate-700 h-48 md:h-full overflow-y-auto", children: [
+    /* @__PURE__ */ jsx7("h3", { className: "text-md font-semibold mb-2 text-slate-300 sticky top-0 bg-slate-800 py-1 z-10 border-b border-slate-700/50", children: "\uC774\uBCA4\uD2B8 \uB85C\uADF8" }),
+    messages.length === 0 && /* @__PURE__ */ jsx7("p", { className: "text-sm text-slate-500 italic", children: "\uC544\uC9C1 \uC774\uBCA4\uD2B8\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4..." }),
+    /* @__PURE__ */ jsx7("div", { className: "space-y-1 text-xs", children: messages.map((msg) => /* @__PURE__ */ jsxs6("div", { className: `break-words`, children: [
+      /* @__PURE__ */ jsxs6("span", { className: "text-slate-500 mr-1.5", children: [
+        "[",
+        new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+        "]"
+      ] }),
+      /* @__PURE__ */ jsx7("span", { className: `${getMessageColor(msg.type)}`, children: msg.text }),
+      msg.details && msg.type !== "dice" && /* @__PURE__ */ jsx7("span", { className: `ml-1 ${getMessageColor("dice")}`, children: msg.details }),
+      msg.type === "dice" && msg.details && /* @__PURE__ */ jsx7("span", { className: `ml-1 ${getMessageColor("dice")}`, children: msg.details })
+    ] }, msg.id)) })
+  ] });
+};
+
+// components/InventoryPanel.tsx
+import { jsx as jsx8, jsxs as jsxs7 } from "react/jsx-runtime";
+var InventoryPanel = ({
+  inventory,
+  maxInventorySize,
+  onOpenEquipmentModal,
+  onSelectItem,
+  selectedInventoryItemId,
+  onSellItem
+}) => {
+  const handleItemClick = (item) => {
+    console.log("\uC544\uC774\uD15C \uD074\uB9AD\uB428:", item.id);
+    onOpenEquipmentModal(null, null, item.id);
+  };
+  const handleSellItem = (e, itemId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("\uD310\uB9E4 \uBC84\uD2BC \uD074\uB9AD\uB428:", itemId);
+    if (onSellItem) {
+      onSellItem(itemId);
+    }
+  };
+  const getItemRarityColor = (rarity) => {
+    return getRarityColorClass(rarity, "text");
+  };
+  return /* @__PURE__ */ jsxs7("div", { className: "bg-slate-800 p-4 rounded-lg shadow-xl border border-slate-700 h-full flex flex-col", children: [
+    /* @__PURE__ */ jsxs7("div", { className: "flex justify-between items-center mb-3", children: [
+      /* @__PURE__ */ jsxs7("h2", { className: "text-xl font-bold text-amber-400 flex items-center", children: [
+        /* @__PURE__ */ jsx8(InventoryIcon, { className: "w-6 h-6 mr-2" }),
+        "\uAC00\uBC29"
+      ] }),
+      /* @__PURE__ */ jsxs7("span", { className: "text-sm text-slate-400", children: [
+        inventory.length,
+        " / ",
+        maxInventorySize,
+        " \uCE78"
+      ] })
+    ] }),
+    inventory.length === 0 && /* @__PURE__ */ jsx8("div", { className: "flex-grow flex items-center justify-center", children: /* @__PURE__ */ jsx8("p", { className: "text-slate-500 italic", children: "\uAC00\uBC29\uC774 \uBE44\uC5B4 \uC788\uC2B5\uB2C8\uB2E4." }) }),
+    /* @__PURE__ */ jsxs7("div", { className: "grid grid-cols-3 sm:grid-cols-4 md:grid-cols-3 lg:grid-cols-4 gap-2 overflow-y-auto flex-grow pr-1", children: [
+      inventory.map((item) => /* @__PURE__ */ jsxs7(
+        "button",
+        {
+          onClick: () => handleItemClick(item),
+          title: `${item.name} (${item.rarity})
+${item.description || ""}`,
+          className: `relative p-1.5 rounded-md aspect-square flex flex-col items-center justify-center transition-all
+                        border-2 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-amber-500
+                        ${selectedInventoryItemId === item.id ? "ring-2 ring-amber-400 shadow-amber-500/50" : getRarityColorClass(item.rarity, "border")}
+                        ${getRarityColorClass(item.rarity, "bg")}`,
+          children: [
+            /* @__PURE__ */ jsx8(
+              "img",
+              {
+                src: `https://picsum.photos/seed/${item.iconSeed}/40/40`,
+                alt: item.name,
+                className: "w-8 h-8 sm:w-10 sm:h-10 object-cover rounded-sm mb-1"
+              }
+            ),
+            /* @__PURE__ */ jsx8("span", { className: `text-[10px] sm:text-xs font-medium text-center leading-tight truncate w-full ${getRarityColorClass(item.rarity, "text")}`, children: item.name }),
+            /* @__PURE__ */ jsx8("span", { className: `absolute top-0.5 right-0.5 px-1 py-0 text-[8px] rounded-bl-md rounded-tr-sm 
+                           ${getRarityColorClass(item.rarity, "bg")} ${getRarityColorClass(item.rarity, "text")} bg-opacity-70 border-l border-b ${getRarityColorClass(item.rarity, "border")}`, children: item.rarity.substring(0, 1) })
+          ]
+        },
+        item.id
+      )),
+      Array.from({ length: Math.max(0, maxInventorySize - inventory.length) }).map((_, index) => /* @__PURE__ */ jsx8("div", { className: "bg-slate-700/30 border-2 border-slate-600/50 rounded-md aspect-square flex items-center justify-center", children: /* @__PURE__ */ jsx8("span", { className: "text-slate-600 text-xs", children: "\uBE44\uC5C8\uC74C" }) }, `empty-${index}`))
+    ] }),
+    selectedInventoryItemId && inventory.find((i) => i.id === selectedInventoryItemId) && /* @__PURE__ */ jsxs7("div", { className: "mt-3 pt-3 border-t border-slate-700", children: [
+      /* @__PURE__ */ jsxs7("div", { className: "flex justify-between items-start mb-2", children: [
+        /* @__PURE__ */ jsx8("h4", { className: `text-sm font-semibold ${getItemRarityColor(inventory.find((i) => i.id === selectedInventoryItemId)?.rarity || "Common")}`, children: inventory.find((i) => i.id === selectedInventoryItemId)?.name }),
+        onSellItem && /* @__PURE__ */ jsxs7(
+          "button",
+          {
+            onClick: (e) => handleSellItem(e, selectedInventoryItemId),
+            className: "flex items-center bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded transition-colors shadow-sm animate-pulse",
+            title: "\uC774 \uC544\uC774\uD15C\uC744 \uD310\uB9E4\uD569\uB2C8\uB2E4",
+            children: [
+              /* @__PURE__ */ jsx8(SellIcon, { className: "w-4 h-4 mr-1" }),
+              "\uC544\uC774\uD15C \uD310\uB9E4"
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx8("p", { className: "text-xs text-slate-400 mt-1", children: inventory.find((i) => i.id === selectedInventoryItemId)?.description })
+    ] })
+  ] });
+};
+
+// components/EquipmentModal.tsx
+import { useState as useState2, useEffect as useEffect4 } from "react";
+import { Fragment as Fragment3, jsx as jsx9, jsxs as jsxs8 } from "react/jsx-runtime";
+var EquipmentModal = ({
+  isOpen,
+  onClose,
+  targetMember,
+  targetSlot,
+  inventoryItemIdToManage,
+  inventory,
+  playerParty,
+  onEquipItem,
+  onSellItem,
+  getEffectiveMemberStats
+}) => {
+  const [selectedMemberForInventoryItem, setSelectedMemberForInventoryItem] = useState2(targetMember);
+  const [selectedSlotForInventoryItem, setSelectedSlotForInventoryItem] = useState2(targetSlot);
+  const [selectedInventoryItemForSlot, setSelectedInventoryItemForSlot] = useState2(null);
+  const itemFromInventoryManage = inventory.find((i) => i.id === inventoryItemIdToManage);
+  useEffect4(() => {
+    if (isOpen) {
+      if (targetMember)
+        setSelectedMemberForInventoryItem(targetMember);
+      else if (playerParty.members.length > 0)
+        setSelectedMemberForInventoryItem(playerParty.members.find((m) => m.isUnlocked && m.isActiveInCombat) || playerParty.members[0]);
+      if (targetSlot)
+        setSelectedSlotForInventoryItem(targetSlot);
+      else if (itemFromInventoryManage)
+        setSelectedSlotForInventoryItem(itemFromInventoryManage.slot);
+      setSelectedInventoryItemForSlot(null);
+    }
+  }, [isOpen, targetMember, targetSlot, itemFromInventoryManage, playerParty.members]);
+  if (!isOpen)
+    return null;
+  const currentMember = inventoryItemIdToManage ? selectedMemberForInventoryItem : targetMember;
+  const currentSlot = inventoryItemIdToManage ? selectedSlotForInventoryItem : targetSlot;
+  if (!currentMember && !itemFromInventoryManage) {
+    console.error("EquipmentModal: Insufficient context to operate.");
+    onClose();
+    return null;
+  }
+  const compatibleItems = inventory.filter(
+    (item) => currentMember && currentSlot && isItemEquippable(item, currentMember.className, currentSlot) && (!itemFromInventoryManage || item.id === itemFromInventoryManage.id || !targetSlot)
+    // If managing a specific inventory item, only show that, or if no targetSlot yet, show all compatible for member
+  );
+  const itemToDisplayForEquip = selectedInventoryItemForSlot || (itemFromInventoryManage && currentSlot && isItemEquippable(itemFromInventoryManage, currentMember.className, currentSlot) ? itemFromInventoryManage : null);
+  const currentlyEquippedItem = currentMember && currentSlot ? currentMember.equipment[currentSlot] : null;
+  const handleMemberSelect = (e) => {
+    const member = playerParty.members.find((m) => m.id === e.target.value);
+    setSelectedMemberForInventoryItem(member || null);
+    if (itemFromInventoryManage && member && !isItemEquippable(itemFromInventoryManage, member.className, itemFromInventoryManage.slot)) {
+      setSelectedSlotForInventoryItem(null);
+    } else if (itemFromInventoryManage) {
+      setSelectedSlotForInventoryItem(itemFromInventoryManage.slot);
+    }
+  };
+  const handleSlotSelect = (e) => {
+    setSelectedSlotForInventoryItem(e.target.value);
+  };
+  const handleEquipClick = () => {
+    if (currentMember && currentSlot && itemToDisplayForEquip) {
+      onEquipItem(currentMember.id, currentSlot, itemToDisplayForEquip.id);
+      onClose();
+    } else if (itemFromInventoryManage && currentMember && currentSlot) {
+      onEquipItem(currentMember.id, currentSlot, itemFromInventoryManage.id);
+      onClose();
+    }
+  };
+  const handleSellItem = () => {
+    if (onSellItem && itemFromInventoryManage) {
+      onSellItem(itemFromInventoryManage.id);
+      onClose();
+    }
+  };
+  const getSlotIcon = (slot, className) => {
+    if (!slot)
+      return null;
+    switch (slot) {
+      case "weapon":
+        return /* @__PURE__ */ jsx9(WeaponSlotIcon, { className });
+      case "armor":
+        return /* @__PURE__ */ jsx9(ArmorSlotIcon, { className });
+      case "shield":
+        return /* @__PURE__ */ jsx9(ShieldSlotIcon, { className });
+      case "accessory":
+        return /* @__PURE__ */ jsx9(AccessorySlotIcon, { className });
+      default:
+        return null;
+    }
+  };
+  const renderItemStats = (item, title) => {
+    if (!item)
+      return /* @__PURE__ */ jsx9("div", { className: "p-2 bg-slate-700/50 rounded", children: /* @__PURE__ */ jsxs8("p", { className: "text-slate-400 italic", children: [
+        title,
+        ": \uC5C6\uC74C"
+      ] }) });
+    return /* @__PURE__ */ jsxs8("div", { className: `p-2 rounded ${getRarityColorClass(item.rarity, "bg")} border ${getRarityColorClass(item.rarity, "border")}`, children: [
+      /* @__PURE__ */ jsxs8("h4", { className: `font-semibold mb-1 ${getRarityColorClass(item.rarity, "text")}`, children: [
+        title,
+        ": ",
+        item.name,
+        " (",
+        item.rarity,
+        ")"
+      ] }),
+      /* @__PURE__ */ jsx9("p", { className: "text-xs text-slate-300", children: item.description })
+    ] });
+  };
+  const availableSlotsForMemberAndItem = itemFromInventoryManage && currentMember ? Object.keys(currentMember.equipment).filter((s) => s === itemFromInventoryManage.slot && isItemEquippable(itemFromInventoryManage, currentMember.className, s)) : Object.keys(currentMember?.equipment || {});
+  return /* @__PURE__ */ jsx9("div", { className: "fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4", onClick: onClose, children: /* @__PURE__ */ jsxs8("div", { className: "bg-slate-800 p-4 md:p-6 rounded-lg shadow-xl w-full max-w-lg md:max-w-2xl max-h-[90vh] flex flex-col text-sm", onClick: (e) => e.stopPropagation(), children: [
+    /* @__PURE__ */ jsx9("h3", { className: "text-xl font-semibold mb-4 text-sky-400", children: itemFromInventoryManage ? `\uC544\uC774\uD15C \uC7A5\uCC29: ${itemFromInventoryManage.name}` : `\uC2AC\uB86F \uC7A5\uCC29: ${currentMember?.name} - ${getSlotDisplayName(currentSlot)}` }),
+    itemFromInventoryManage && /* @__PURE__ */ jsxs8("div", { className: "grid grid-cols-2 gap-4 mb-4", children: [
+      /* @__PURE__ */ jsxs8("div", { children: [
+        /* @__PURE__ */ jsx9("label", { htmlFor: "memberSelect", className: "block text-xs font-medium text-slate-400 mb-1", children: "\uB300\uC0C1 \uBA64\uBC84:" }),
+        /* @__PURE__ */ jsxs8(
+          "select",
+          {
+            id: "memberSelect",
+            value: selectedMemberForInventoryItem?.id || "",
+            onChange: handleMemberSelect,
+            className: "w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-200 focus:ring-sky-500 focus:border-sky-500",
+            children: [
+              /* @__PURE__ */ jsx9("option", { value: "", disabled: true, children: "\uBA64\uBC84 \uC120\uD0DD..." }),
+              playerParty.members.filter((m) => m.isUnlocked).map((m) => /* @__PURE__ */ jsxs8("option", { value: m.id, disabled: !isItemEquippable(itemFromInventoryManage, m.className, itemFromInventoryManage.slot), children: [
+                m.name,
+                " (",
+                m.className,
+                ") ",
+                !isItemEquippable(itemFromInventoryManage, m.className, itemFromInventoryManage.slot) ? "- \uC7A5\uCC29\uBD88\uAC00" : ""
+              ] }, m.id))
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs8("div", { children: [
+        /* @__PURE__ */ jsx9("label", { htmlFor: "slotSelect", className: "block text-xs font-medium text-slate-400 mb-1", children: "\uB300\uC0C1 \uC2AC\uB86F:" }),
+        /* @__PURE__ */ jsx9(
+          "select",
+          {
+            id: "slotSelect",
+            value: selectedSlotForInventoryItem || "",
+            onChange: handleSlotSelect,
+            disabled: !selectedMemberForInventoryItem || availableSlotsForMemberAndItem.length === 0,
+            className: "w-full p-2 bg-slate-700 border border-slate-600 rounded-md text-slate-200 focus:ring-sky-500 focus:border-sky-500",
+            children: itemFromInventoryManage && selectedMemberForInventoryItem && isItemEquippable(itemFromInventoryManage, selectedMemberForInventoryItem.className, itemFromInventoryManage.slot) ? /* @__PURE__ */ jsx9("option", { value: itemFromInventoryManage.slot, children: getSlotDisplayName(itemFromInventoryManage.slot) }) : /* @__PURE__ */ jsx9("option", { value: "", disabled: true, children: "\uC2AC\uB86F \uC120\uD0DD (\uD638\uD658 \uC544\uC774\uD15C \uC5C6\uC74C)" })
+          }
+        )
+      ] })
+    ] }),
+    !itemFromInventoryManage && currentSlot && /* @__PURE__ */ jsxs8(Fragment3, { children: [
+      /* @__PURE__ */ jsx9("h4", { className: "text-md font-medium text-slate-300 mb-2", children: "\uC7A5\uCC29 \uAC00\uB2A5\uD55C \uC544\uC774\uD15C (\uAC00\uBC29):" }),
+      /* @__PURE__ */ jsx9("div", { className: "grid grid-cols-2 sm:grid-cols-3 gap-2 overflow-y-auto max-h-48 pr-1 bg-slate-900/50 p-2 rounded-md mb-4", children: compatibleItems.length > 0 ? compatibleItems.map((item) => /* @__PURE__ */ jsxs8(
+        "button",
+        {
+          onClick: () => setSelectedInventoryItemForSlot(item),
+          className: `p-2 rounded-md text-left border-2 transition-colors 
+                                ${itemToDisplayForEquip?.id === item.id ? "ring-2 ring-amber-400 shadow-amber-500/50" : getRarityColorClass(item.rarity, "border")} 
+                                ${getRarityColorClass(item.rarity, "bg")}`,
+          children: [
+            /* @__PURE__ */ jsxs8("div", { className: "flex items-center mb-1", children: [
+              /* @__PURE__ */ jsx9("img", { src: `https://picsum.photos/seed/${item.iconSeed}/30/30`, alt: item.name, className: "w-6 h-6 mr-2 rounded-sm" }),
+              /* @__PURE__ */ jsx9("span", { className: `font-semibold text-xs ${getRarityColorClass(item.rarity, "text")}`, children: item.name })
+            ] }),
+            /* @__PURE__ */ jsx9("p", { className: "text-[10px] text-slate-400 truncate", children: item.description })
+          ]
+        },
+        item.id
+      )) : /* @__PURE__ */ jsx9("p", { className: "text-slate-500 italic col-span-full text-center py-4", children: "\uC774 \uC2AC\uB86F\uC5D0 \uB9DE\uB294 \uC544\uC774\uD15C\uC774 \uAC00\uBC29\uC5D0 \uC5C6\uC2B5\uB2C8\uB2E4." }) })
+    ] }),
+    (itemToDisplayForEquip || currentlyEquippedItem) && /* @__PURE__ */ jsxs8("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-3 mb-4", children: [
+      renderItemStats(currentlyEquippedItem, "\uD604\uC7AC \uC7A5\uCC29"),
+      renderItemStats(itemToDisplayForEquip, "\uC120\uD0DD\uB41C \uC544\uC774\uD15C")
+    ] }),
+    !itemToDisplayForEquip && !currentlyEquippedItem && !itemFromInventoryManage && /* @__PURE__ */ jsx9("p", { className: "text-slate-500 italic text-center py-4", children: "\uC120\uD0DD\uB41C \uC544\uC774\uD15C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4." }),
+    /* @__PURE__ */ jsxs8("div", { className: "mt-auto pt-4 border-t border-slate-700 flex justify-end space-x-3", children: [
+      /* @__PURE__ */ jsx9(
+        "button",
+        {
+          onClick: onClose,
+          className: "px-4 py-2 bg-slate-600 hover:bg-slate-500 text-slate-200 rounded-md transition-colors",
+          children: "\uCDE8\uC18C"
+        }
+      ),
+      onSellItem && itemFromInventoryManage && /* @__PURE__ */ jsxs8(
+        "button",
+        {
+          onClick: handleSellItem,
+          className: "px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-md transition-colors flex items-center",
+          title: "\uC774 \uC544\uC774\uD15C\uC744 \uD310\uB9E4\uD569\uB2C8\uB2E4",
+          children: [
+            /* @__PURE__ */ jsx9(SellIcon, { className: "w-4 h-4 mr-1.5" }),
+            "\uD310\uB9E4\uD558\uAE30"
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs8(
+        "button",
+        {
+          onClick: handleEquipClick,
+          disabled: !itemToDisplayForEquip || !currentMember || !currentSlot || (itemFromInventoryManage ? !isItemEquippable(itemFromInventoryManage, currentMember.className, currentSlot) : false),
+          className: "px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-md transition-colors disabled:bg-slate-500 disabled:cursor-not-allowed",
+          children: [
+            getSlotIcon(currentSlot, "w-4 h-4 mr-1.5 inline-block"),
+            "\uC7A5\uCC29\uD558\uAE30"
+          ]
+        }
+      )
+    ] })
+  ] }) });
+};
+var EquipmentModal_default = EquipmentModal;
+
+// services/enemyService.ts
+var calculateEnemyDnDStats = (baseAttackForDnd, baseDefenseForDnd, level, isBoss = false) => {
+  const ac = BASE_AC + Math.floor(baseDefenseForDnd / 3) + Math.floor(level / 5);
+  const attackBonus = Math.floor(baseAttackForDnd / 4) + Math.floor(level / 4) + (isBoss ? 1 : 0);
+  const damageBonus = Math.floor(baseAttackForDnd / 5) + Math.floor(level / 5) + (isBoss ? 1 : 0);
+  let weaponDice = BASE_ENEMY_WEAPON_DAMAGE_DICE_STR;
+  if (isBoss) {
+    weaponDice = level > 15 ? "2d6" : level > 7 ? "1d8" : "1d6";
+  } else {
+    if (level > 20)
+      weaponDice = "1d8";
+    else if (level > 10)
+      weaponDice = "1d6";
+    else
+      weaponDice = "1d4";
+  }
+  return {
+    armorClass: ac,
+    attackBonus,
+    damageBonus: Math.max(0, damageBonus),
+    weaponDamageDiceStr: weaponDice
+  };
+};
+var applyNgPlusScaling = (stageScaledValue, ngPlusLevel, ngPlusMultiplierPerLevel) => {
+  if (ngPlusLevel === 0)
+    return stageScaledValue;
+  return Math.floor(stageScaledValue * (1 + ngPlusLevel * ngPlusMultiplierPerLevel));
+};
+var generateNewEnemy = (stage, ngPlusLevel = 0) => {
+  const nameIndex = (stage - 1) % ENEMY_NAMES.length;
+  const baseEnemyName = ENEMY_NAMES[nameIndex];
+  const enemyName = `${baseEnemyName} (\uB808\uBCA8 ${stage}${ngPlusLevel > 0 ? ` NG+${ngPlusLevel}` : ""})`;
+  const stageScaledHealth = Math.floor(BASE_ENEMY_HEALTH * Math.pow(ENEMY_HEALTH_STAGE_SCALE, stage - 1));
+  const stageScaledAttack = Math.floor(BASE_ENEMY_ATTACK * Math.pow(ENEMY_STAT_STAGE_SCALE, stage - 1));
+  const stageScaledDefense = Math.floor(BASE_ENEMY_DEFENSE * Math.pow(ENEMY_STAT_STAGE_SCALE, stage - 1));
+  const stageScaledGoldReward = Math.floor(BASE_ENEMY_GOLD_REWARD * Math.pow(ENEMY_REWARD_STAGE_SCALE, stage - 1));
+  const stageScaledXpReward = Math.floor(BASE_ENEMY_XP_REWARD * Math.pow(ENEMY_REWARD_STAGE_SCALE, stage - 1));
+  const finalHealth = applyNgPlusScaling(stageScaledHealth, ngPlusLevel, NG_PLUS_ENEMY_HEALTH_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const baseAttackForDnd = applyNgPlusScaling(stageScaledAttack, ngPlusLevel, NG_PLUS_ENEMY_STAT_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const baseDefenseForDnd = applyNgPlusScaling(stageScaledDefense, ngPlusLevel, NG_PLUS_ENEMY_STAT_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const finalGoldReward = applyNgPlusScaling(stageScaledGoldReward, ngPlusLevel, NG_PLUS_REWARD_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const finalXpReward = applyNgPlusScaling(stageScaledXpReward, ngPlusLevel, NG_PLUS_REWARD_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const dndStats = calculateEnemyDnDStats(baseAttackForDnd, baseDefenseForDnd, stage);
+  return {
+    id: `enemy-${stage}-${ngPlusLevel}-${Date.now()}`,
+    name: enemyName,
+    maxHealth: Math.max(finalHealth, BASE_ENEMY_HEALTH),
+    currentHealth: Math.max(finalHealth, BASE_ENEMY_HEALTH),
+    attack: baseAttackForDnd,
+    // This is the NG+ scaled base attack for D&D calc
+    defense: baseDefenseForDnd,
+    // This is the NG+ scaled base defense for D&D calc
+    ...dndStats,
+    goldReward: Math.max(finalGoldReward, BASE_ENEMY_GOLD_REWARD),
+    xpReward: Math.max(finalXpReward, BASE_ENEMY_XP_REWARD),
+    imageUrl: `https://picsum.photos/seed/${encodeURIComponent(baseEnemyName)}-${stage}-${ngPlusLevel}/200/200`,
+    isBoss: false
+  };
+};
+var generateBossForStage = (stage, ngPlusLevel = 0) => {
+  const baseEnemyForBossName = ENEMY_NAMES[(stage - 1) % ENEMY_NAMES.length];
+  const stageBaseHealth = Math.floor(BASE_ENEMY_HEALTH * Math.pow(ENEMY_HEALTH_STAGE_SCALE, stage - 1));
+  const stageBaseAttack = Math.floor(BASE_ENEMY_ATTACK * Math.pow(ENEMY_STAT_STAGE_SCALE, stage - 1));
+  const stageBaseDefense = Math.floor(BASE_ENEMY_DEFENSE * Math.pow(ENEMY_STAT_STAGE_SCALE, stage - 1));
+  const stageBaseGoldReward = Math.floor(BASE_ENEMY_GOLD_REWARD * Math.pow(ENEMY_REWARD_STAGE_SCALE, stage - 1));
+  const stageBaseXpReward = Math.floor(BASE_ENEMY_XP_REWARD * Math.pow(ENEMY_REWARD_STAGE_SCALE, stage - 1));
+  const bossName = `${BOSS_NAME_PREFIX}${baseEnemyForBossName} (\uB808\uBCA8 ${stage}${ngPlusLevel > 0 ? ` NG+${ngPlusLevel}` : ""} \uBCF4\uC2A4)`;
+  const bossStageScaledAttack = Math.floor(stageBaseAttack * BOSS_STATS_MULTIPLIERS.attack);
+  const bossStageScaledDefense = Math.floor(stageBaseDefense * BOSS_STATS_MULTIPLIERS.defense);
+  const bossStageScaledHealth = Math.floor(stageBaseHealth * BOSS_STATS_MULTIPLIERS.health);
+  const bossStageScaledGold = Math.floor(stageBaseGoldReward * BOSS_STATS_MULTIPLIERS.goldReward);
+  const bossStageScaledXp = Math.floor(stageBaseXpReward * BOSS_STATS_MULTIPLIERS.xpReward);
+  const finalHealth = applyNgPlusScaling(bossStageScaledHealth, ngPlusLevel, NG_PLUS_ENEMY_HEALTH_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const baseAttackForDnd = applyNgPlusScaling(bossStageScaledAttack, ngPlusLevel, NG_PLUS_ENEMY_STAT_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const baseDefenseForDnd = applyNgPlusScaling(bossStageScaledDefense, ngPlusLevel, NG_PLUS_ENEMY_STAT_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const finalGoldReward = applyNgPlusScaling(bossStageScaledGold, ngPlusLevel, NG_PLUS_REWARD_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const finalXpReward = applyNgPlusScaling(bossStageScaledXp, ngPlusLevel, NG_PLUS_REWARD_ADDITIVE_MULTIPLIER_PER_LEVEL);
+  const dndStats = calculateEnemyDnDStats(baseAttackForDnd, baseDefenseForDnd, stage, true);
+  return {
+    id: `boss-${stage}-${ngPlusLevel}-${Date.now()}`,
+    name: bossName,
+    maxHealth: Math.max(BASE_ENEMY_HEALTH, finalHealth),
+    currentHealth: Math.max(BASE_ENEMY_HEALTH, finalHealth),
+    attack: baseAttackForDnd,
+    defense: baseDefenseForDnd,
+    ...dndStats,
+    goldReward: Math.max(BASE_ENEMY_GOLD_REWARD, finalGoldReward),
+    xpReward: Math.max(BASE_ENEMY_XP_REWARD, finalXpReward),
+    imageUrl: `https://picsum.photos/seed/${encodeURIComponent(baseEnemyForBossName)}-boss-${stage}-${ngPlusLevel}/250/250`,
+    isBoss: true
+  };
+};
+
+// services/lootService.ts
+import { v4 as uuidv4 } from "uuid";
+var ITEM_TIERS = {
+  Common: { statMultiplier: 1, namePrefix: "\uB0A1\uC740", maxEffects: 1 },
+  Uncommon: { statMultiplier: 1.3, namePrefix: "\uC4F8\uB9CC\uD55C", maxEffects: 2 },
+  Rare: { statMultiplier: 1.7, namePrefix: "\uC815\uAD50\uD55C", maxEffects: 3 },
+  Epic: { statMultiplier: 2.2, namePrefix: "\uBA85\uC778\uC758", maxEffects: 4 }
+};
+var SLOT_BASE_DATA = {
+  weapon: {
+    baseName: ["\uAC80", "\uB3C4\uB07C", "\uB454\uAE30", "\uB2E8\uAC80", "\uD65C", "\uC9C0\uD321\uC774"],
+    possibleEffects: ["weaponDamageDiceStrOverride", "attackBonusMod", "damageBonusMod", "attackSpeedMod"]
+  },
+  armor: {
+    baseName: ["\uCC9C \uAC11\uC637", "\uAC00\uC8FD \uAC11\uC637", "\uC0AC\uC2AC \uAC11\uC637", "\uD310\uAE08 \uAC11\uC637", "\uB85C\uBE0C"],
+    possibleEffects: ["armorClassMod", "maxHealthMod", "attackSpeedMod"]
+  },
+  shield: {
+    baseName: ["\uBC84\uD074\uB7EC", "\uCE74\uC774\uD2B8 \uC2E4\uB4DC", "\uD0C0\uC6CC \uC2E4\uB4DC"],
+    possibleEffects: ["armorClassMod", "maxHealthMod"],
+    classRestrictions: { Warrior: true }
+  },
+  accessory: {
+    baseName: ["\uBC18\uC9C0", "\uBAA9\uAC78\uC774", "\uB9DD\uD1A0", "\uBD80\uC801"],
+    possibleEffects: ["maxHealthMod", "attackBonusMod", "damageBonusMod", "armorClassMod", "attackSpeedMod"]
+  }
+};
+var WEAPON_DICE_BY_RARITY_AND_SLOT = {
+  Common: ["1d4", "1d6"],
+  Uncommon: ["1d6", "1d8", "2d4"],
+  Rare: ["1d8", "1d10", "2d6"],
+  Epic: ["1d10", "1d12", "2d8"]
+};
+function pickWeightedRarity(stage) {
+  let totalWeight = 0;
+  const stageBonusFactor = Math.floor(stage / STAGE_RARITY_BONUS_THRESHOLD);
+  const adjustedWeights = { ...RARITY_WEIGHTS };
+  adjustedWeights.Uncommon += stageBonusFactor * 2;
+  adjustedWeights.Rare += stageBonusFactor * 1.5;
+  adjustedWeights.Epic += stageBonusFactor * 1;
+  for (const r in adjustedWeights) {
+    totalWeight += adjustedWeights[r];
+  }
+  let random = Math.random() * totalWeight;
+  for (const r in adjustedWeights) {
+    const rarity = r;
+    if (random < adjustedWeights[rarity])
+      return rarity;
+    random -= adjustedWeights[rarity];
+  }
+  return "Common";
+}
+function generateItemName(baseName, rarity, adjectives) {
+  const prefix = ITEM_TIERS[rarity].namePrefix;
+  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)] || "";
+  return `${prefix} ${randomAdjective} ${baseName}`.replace(/\s+/g, " ").trim();
+}
+function determineClassRestriction(slot, baseName) {
+  if (slot === "shield")
+    return ["Warrior"];
+  if (slot === "weapon") {
+    if (baseName.includes("\uD65C"))
+      return ["Archer"];
+    if (baseName.includes("\uC9C0\uD321\uC774"))
+      return ["Mage"];
+    if (baseName.includes("\uAC80") || baseName.includes("\uB3C4\uB07C") || baseName.includes("\uB454\uAE30"))
+      return ["Warrior"];
+    if (baseName.includes("\uB2E8\uAC80"))
+      return ["Warrior", "Archer", "Mage"];
+  }
+  if (slot === "armor") {
+    if (baseName.includes("\uD310\uAE08"))
+      return ["Warrior"];
+    if (baseName.includes("\uC0AC\uC2AC"))
+      return ["Warrior", "Archer"];
+    if (baseName.includes("\uB85C\uBE0C"))
+      return ["Mage"];
+    if (baseName.includes("\uAC00\uC8FD") || baseName.includes("\uCC9C"))
+      return ["Warrior", "Archer", "Mage"];
+  }
+  return null;
+}
+function generateEquipmentItem(stage, rarityHint) {
+  const rarity = rarityHint || pickWeightedRarity(stage);
+  const tierInfo = ITEM_TIERS[rarity];
+  const slot = EQUIPMENT_SLOTS_ORDER[Math.floor(Math.random() * EQUIPMENT_SLOTS_ORDER.length)];
+  const slotInfo = SLOT_BASE_DATA[slot];
+  const baseName = slotInfo.baseName[Math.floor(Math.random() * slotInfo.baseName.length)];
+  const adjectives = ["\uC218\uD638\uC758", "\uACF5\uACA9\uC758", "\uC2E0\uC18D\uC758", "\uAC15\uD0C0\uC758", "\uACF0\uC758", "\uC5EC\uC6B0\uC758", "\uAC70\uC778\uC758", "\uC6A9\uAE30\uC758", "\uADF8\uB9BC\uC790\uC758"];
+  const name = generateItemName(baseName, rarity, adjectives);
+  const item = {
+    id: uuidv4(),
+    name,
+    slot,
+    rarity,
+    iconSeed: `${rarity}${slot}${baseName}`.replace(/\s/g, ""),
+    classRequirement: determineClassRestriction(slot, baseName)
+  };
+  const numEffects = Math.min(slotInfo.possibleEffects.length, Math.floor(Math.random() * tierInfo.maxEffects) + 1);
+  const chosenEffects = /* @__PURE__ */ new Set();
+  for (let i = 0; i < numEffects; i++) {
+    const availableEffects = slotInfo.possibleEffects.filter((e) => !chosenEffects.has(e));
+    if (availableEffects.length === 0)
+      break;
+    const effectKey = availableEffects[Math.floor(Math.random() * availableEffects.length)];
+    chosenEffects.add(effectKey);
+    switch (effectKey) {
+      case "weaponDamageDiceStrOverride":
+        const diceOptions = WEAPON_DICE_BY_RARITY_AND_SLOT[rarity] || ["1d4"];
+        item.weaponDamageDiceStrOverride = diceOptions[Math.floor(Math.random() * diceOptions.length)];
+        break;
+      case "attackBonusMod":
+        item.attackBonusMod = Math.floor(Math.random() * (2 + ITEM_TIERS[rarity].statMultiplier) + (ITEM_TIERS[rarity].statMultiplier - 1));
+        break;
+      case "damageBonusMod":
+        item.damageBonusMod = Math.floor(Math.random() * (3 + ITEM_TIERS[rarity].statMultiplier * 1.5) + (ITEM_TIERS[rarity].statMultiplier - 1));
+        break;
+      case "armorClassMod":
+        if (slot === "armor")
+          item.armorClassMod = Math.floor(Math.random() * (3 * tierInfo.statMultiplier) + 1);
+        else if (slot === "shield")
+          item.armorClassMod = Math.floor(Math.random() * (2 * tierInfo.statMultiplier) + 1);
+        else
+          item.armorClassMod = Math.floor(Math.random() * (1 * tierInfo.statMultiplier) + 1);
+        break;
+      case "maxHealthMod":
+        item.maxHealthMod = Math.floor((Math.random() * 10 + 5) * tierInfo.statMultiplier);
+        break;
+      case "attackSpeedMod":
+        if (slot === "weapon")
+          item.attackSpeedMod = -(Math.random() * 0.05 * tierInfo.statMultiplier);
+        else if (slot === "armor" && (baseName.includes("\uD310\uAE08") || baseName.includes("\uC0AC\uC2AC")))
+          item.attackSpeedMod = Math.random() * 0.03 * tierInfo.statMultiplier;
+        break;
+    }
+    if (item.attackBonusMod)
+      item.attackBonusMod = Math.max(0, Math.round(item.attackBonusMod));
+    if (item.damageBonusMod)
+      item.damageBonusMod = Math.max(0, Math.round(item.damageBonusMod));
+    if (item.armorClassMod)
+      item.armorClassMod = Math.max(0, Math.round(item.armorClassMod));
+    if (item.maxHealthMod)
+      item.maxHealthMod = Math.max(0, Math.round(item.maxHealthMod));
+    if (item.attackSpeedMod)
+      item.attackSpeedMod = parseFloat(item.attackSpeedMod.toFixed(3));
+  }
+  let descParts = [];
+  if (item.weaponDamageDiceStrOverride)
+    descParts.push(`\uD53C\uD574: ${item.weaponDamageDiceStrOverride}`);
+  if (item.attackBonusMod)
+    descParts.push(`\uBA85\uC911 +${item.attackBonusMod}`);
+  if (item.damageBonusMod)
+    descParts.push(`\uD53C\uD574 \uBCF4\uB108\uC2A4 +${item.damageBonusMod}`);
+  if (item.armorClassMod)
+    descParts.push(`AC +${item.armorClassMod}`);
+  if (item.maxHealthMod)
+    descParts.push(`\uCD5C\uB300 HP +${item.maxHealthMod}`);
+  if (item.attackSpeedMod)
+    descParts.push(`\uACF5\uACA9 \uC18D\uB3C4 ${item.attackSpeedMod > 0 ? "-" : "+"}${Math.abs(item.attackSpeedMod * 100).toFixed(0)}%`);
+  item.description = descParts.join(", ") || "\uD2B9\uBCC4\uD55C \uD6A8\uACFC\uAC00 \uC5C6\uB294 \uC544\uC774\uD15C\uC785\uB2C8\uB2E4.";
+  if (item.classRequirement) {
+    item.description += ` (\uC694\uAD6C \uD074\uB798\uC2A4: ${item.classRequirement.join("/")})`;
+  }
+  return item;
+}
+function getLootDrop(stage, isBoss) {
+  const dropChance = BASE_LOOT_DROP_CHANCE * (isBoss ? BOSS_LOOT_DROP_CHANCE_MULTIPLIER : 1);
+  if (Math.random() < dropChance) {
+    let rarityHint = void 0;
+    if (isBoss) {
+      const bossRarityRoll = Math.random();
+      if (bossRarityRoll < 0.1)
+        rarityHint = "Epic";
+      else if (bossRarityRoll < 0.4)
+        rarityHint = "Rare";
+      else
+        rarityHint = "Uncommon";
+    }
+    return generateEquipmentItem(stage, rarityHint);
+  }
+  return null;
+}
+
+// App.tsx
+import { v4 as uuidv42 } from "uuid";
+import { jsx as jsx10, jsxs as jsxs9 } from "react/jsx-runtime";
+var App = () => {
+  const [playerParty, setPlayerParty] = useState3(() => {
+    const initialState = JSON.parse(JSON.stringify(INITIAL_PLAYER_PARTY_STATE));
+    initialState.members.forEach((member) => {
+      member.currentHealth = getEffectiveMemberStatsForApp(member, initialState, true).maxHealth;
+    });
+    return initialState;
+  });
+  const [currentEnemy, setCurrentEnemy] = useState3(null);
+  const [currentStage, setCurrentStage] = useState3(1);
+  const [gameLog, setGameLog] = useState3([]);
+  const [lastEnemyAttackTime, setLastEnemyAttackTime] = useState3(0);
+  const [lastHealTime, setLastHealTime] = useState3(0);
+  const [isAutoUpgradeEnabled, setIsAutoUpgradeEnabled] = useState3(true);
+  const [isAutoStageProgressionEnabled, setIsAutoStageProgressionEnabled] = useState3(true);
+  const [isAutoEquipEnabled, setIsAutoEquipEnabled] = useState3(true);
+  const [isPartyWiped, setIsPartyWiped] = useState3(false);
+  const [battlesUntilBoss, setBattlesUntilBoss] = useState3(BOSS_BATTLE_THRESHOLD);
+  const [isBossBattleActive, setIsBossBattleActive] = useState3(false);
+  const [isStageBossDefeated, setIsStageBossDefeated] = useState3(false);
+  const [canStartNewGamePlus, setCanStartNewGamePlus] = useState3(false);
+  const [diceRollDisplay, setDiceRollDisplay] = useState3(null);
+  const [floatingTexts, setFloatingTexts] = useState3([]);
+  const diceDisplayTimeoutRef = useRef3(null);
+  const [equipmentModalState, setEquipmentModalState] = useState3({ isOpen: false, memberId: null, slotType: null, inventoryItemId: null });
+  const [selectedInventoryItemId, setSelectedInventoryItemId] = useState3(null);
+  const playerPartyRef = useRef3(playerParty);
+  const currentStageRef = useRef3(currentStage);
+  const currentEnemyRef = useRef3(currentEnemy);
+  const battlesUntilBossRef = useRef3(battlesUntilBoss);
+  const isBossBattleActiveRef = useRef3(isBossBattleActive);
+  const isStageBossDefeatedRef = useRef3(isStageBossDefeated);
+  const isAutoUpgradeEnabledRef = useRef3(isAutoUpgradeEnabled);
+  const isAutoStageProgressionEnabledRef = useRef3(isAutoStageProgressionEnabled);
+  const isAutoEquipEnabledRef = useRef3(isAutoEquipEnabled);
+  const isPartyWipedRef = useRef3(isPartyWiped);
+  const canStartNewGamePlusRef = useRef3(canStartNewGamePlus);
+  const lastEnemyAttackTimeRef = useRef3(lastEnemyAttackTime);
+  const lastHealTimeRef = useRef3(lastHealTime);
+  useEffect5(() => {
+    playerPartyRef.current = playerParty;
+  }, [playerParty]);
+  useEffect5(() => {
+    currentStageRef.current = currentStage;
+  }, [currentStage]);
+  useEffect5(() => {
+    currentEnemyRef.current = currentEnemy;
+  }, [currentEnemy]);
+  useEffect5(() => {
+    battlesUntilBossRef.current = battlesUntilBoss;
+  }, [battlesUntilBoss]);
+  useEffect5(() => {
+    isBossBattleActiveRef.current = isBossBattleActive;
+  }, [isBossBattleActive]);
+  useEffect5(() => {
+    isStageBossDefeatedRef.current = isStageBossDefeated;
+  }, [isStageBossDefeated]);
+  useEffect5(() => {
+    isAutoUpgradeEnabledRef.current = isAutoUpgradeEnabled;
+  }, [isAutoUpgradeEnabled]);
+  useEffect5(() => {
+    isAutoStageProgressionEnabledRef.current = isAutoStageProgressionEnabled;
+  }, [isAutoStageProgressionEnabled]);
+  useEffect5(() => {
+    isAutoEquipEnabledRef.current = isAutoEquipEnabled;
+  }, [isAutoEquipEnabled]);
+  useEffect5(() => {
+    isPartyWipedRef.current = isPartyWiped;
+  }, [isPartyWiped]);
+  useEffect5(() => {
+    canStartNewGamePlusRef.current = canStartNewGamePlus;
+  }, [canStartNewGamePlus]);
+  useEffect5(() => {
+    lastEnemyAttackTimeRef.current = lastEnemyAttackTime;
+  }, [lastEnemyAttackTime]);
+  useEffect5(() => {
+    lastHealTimeRef.current = lastHealTime;
+  }, [lastHealTime]);
+  const addLogMessage = useCallback((text, type, details) => {
+    setGameLog((prevLog) => {
+      const newLog = [...prevLog, { id: uuidv42(), text, type, timestamp: Date.now(), details }];
+      return newLog.slice(-MAX_LOG_MESSAGES);
+    });
+  }, []);
+  const createFloatingText = useCallback((text, colorType, targetId) => {
+    setFloatingTexts((prev) => [...prev, { id: uuidv42(), text, colorType, targetId, offsetX: Math.random() * 40 - 20, offsetY: Math.random() * 20 - 10, timestamp: Date.now() }]);
+  }, []);
+  const handleFloatingTextAnimationComplete = useCallback((id) => setFloatingTexts((prev) => prev.filter((ft) => ft.id !== id)), []);
+  const showDiceRollAnimation = useCallback((info) => {
+    if (diceDisplayTimeoutRef.current)
+      clearTimeout(diceDisplayTimeoutRef.current);
+    setDiceRollDisplay({ ...info, isVisible: true, key: uuidv42() });
+    diceDisplayTimeoutRef.current = window.setTimeout(() => setDiceRollDisplay((prev) => prev ? { ...prev, isVisible: false } : null), 3e3);
+  }, []);
+  const getEffectiveMemberStats = useCallback((member, party, forInitialHealth = false) => {
+    let maxHealth = member.baseMaxHealth;
+    let attackSpeed = member.baseAttackSpeed;
+    let armorClass = BASE_AC + Math.floor(member.baseDefense / 3);
+    let attackBonus = Math.floor(member.level / 2) + Math.floor(member.baseAttack / 4 - 1);
+    let damageBonus = Math.max(0, Math.floor(member.baseAttack / 3 - 2));
+    let weaponDamageDiceStr = member.baseWeaponDamageDiceStr;
+    if (!forInitialHealth) {
+      maxHealth += party.partyMaxHealthUpgradeLevel * UPGRADE_CONFIGS.maxHealth.statIncrement;
+      armorClass += Math.floor(party.partyDefenseUpgradeLevel * (UPGRADE_CONFIGS.defense.statIncrementAC || 0));
+      attackBonus += Math.floor(party.partyAttackUpgradeLevel * (UPGRADE_CONFIGS.attack.statIncrementAttackBonus || 0));
+      damageBonus += Math.floor(party.partyAttackUpgradeLevel * (UPGRADE_CONFIGS.attack.statIncrementDamageBonus || 0));
+      attackSpeed += party.partyAttackSpeedUpgradeLevel * UPGRADE_CONFIGS.attackSpeed.statIncrement;
+    }
+    for (const slotKey in member.equipment) {
+      const item = member.equipment[slotKey];
+      if (item) {
+        maxHealth += getEquipmentEffectValue(item, "maxHealthMod");
+        armorClass += getEquipmentEffectValue(item, "armorClassMod");
+        attackBonus += getEquipmentEffectValue(item, "attackBonusMod");
+        damageBonus += getEquipmentEffectValue(item, "damageBonusMod");
+        attackSpeed += getEquipmentEffectValue(item, "attackSpeedMod");
+        if (item.slot === "weapon" && item.weaponDamageDiceStrOverride) {
+          weaponDamageDiceStr = item.weaponDamageDiceStrOverride;
+        }
+      }
+    }
+    maxHealth = Math.max(1, maxHealth);
+    attackSpeed = Math.max(0.1, attackSpeed);
+    if (UPGRADE_CONFIGS.attackSpeed.maxLevel) {
+      const baseSpeed = INITIAL_PARTY_MEMBERS_CONFIG.find((mConf) => mConf.id === member.id)?.baseAttackSpeed || 1;
+      const maxSpeedFromUpgrades = baseSpeed + UPGRADE_CONFIGS.attackSpeed.maxLevel * UPGRADE_CONFIGS.attackSpeed.statIncrement;
+      attackSpeed = Math.min(attackSpeed, maxSpeedFromUpgrades + (member.equipment.weapon?.attackSpeedMod || 0) + (member.equipment.armor?.attackSpeedMod || 0) + (member.equipment.accessory?.attackSpeedMod || 0));
+    }
+    return { maxHealth, attackSpeed, armorClass, attackBonus, damageBonus, weaponDamageDiceStr };
+  }, []);
+  function getEffectiveMemberStatsForApp(member, party, forInitialHealth = false) {
+    let maxHealth = member.baseMaxHealth;
+    let attackSpeed = member.baseAttackSpeed;
+    let armorClass = BASE_AC + Math.floor(member.baseDefense / 3);
+    let attackBonus = Math.floor(member.level / 2) + Math.floor(member.baseAttack / 4 - 1);
+    let damageBonus = Math.max(0, Math.floor(member.baseAttack / 3 - 2));
+    let weaponDamageDiceStr = member.baseWeaponDamageDiceStr;
+    for (const slotKey in member.equipment) {
+      const item = member.equipment[slotKey];
+      if (item) {
+        maxHealth += getEquipmentEffectValue(item, "maxHealthMod");
+        armorClass += getEquipmentEffectValue(item, "armorClassMod");
+        if (item.slot === "weapon" && item.weaponDamageDiceStrOverride)
+          weaponDamageDiceStr = item.weaponDamageDiceStrOverride;
+      }
+    }
+    return { maxHealth, attackSpeed, armorClass, attackBonus, damageBonus, weaponDamageDiceStr };
+  }
+  useEffect5(() => {
+    const savedData = localStorage.getItem(IDLE_RPG_SAVE_KEY);
+    let initialEnemyToSpawn = null;
+    let gameLoadedMessage = "\uC0C8\uB85C\uC6B4 \uBAA8\uD5D8\uC744 \uBD88\uB7EC\uC654\uC2B5\uB2C8\uB2E4 (NG+ \uC5C5\uB370\uC774\uD2B8 \uC801\uC6A9).";
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        const loadedMembers = (parsedData.playerParty?.members || []).map((savedMemberData) => {
+          const initialConfig = INITIAL_PARTY_MEMBERS_CONFIG.find((im) => im.id === savedMemberData.id);
+          if (!initialConfig)
+            return null;
+          const loadedMember = {
+            ...initialConfig,
+            level: savedMemberData.level || 1,
+            xp: savedMemberData.xp || 0,
+            xpToNextLevel: savedMemberData.xpToNextLevel || 100,
+            currentHealth: savedMemberData.currentHealth || initialConfig.baseMaxHealth,
+            isUnlocked: savedMemberData.isUnlocked !== void 0 ? savedMemberData.isUnlocked : initialConfig.isUnlocked,
+            isActiveInCombat: savedMemberData.isActiveInCombat !== void 0 ? savedMemberData.isActiveInCombat : initialConfig.isActiveInCombat,
+            lastAttackTime: savedMemberData.lastAttackTime || 0,
+            equipment: { weapon: null, armor: null, shield: null, accessory: null }
+          };
+          for (const slot in savedMemberData.equipment) {
+            if (savedMemberData.equipment[slot]) {
+              loadedMember.equipment[slot] = JSON.parse(JSON.stringify(savedMemberData.equipment[slot]));
+            }
+          }
+          return loadedMember;
+        }).filter((m) => m !== null);
+        INITIAL_PARTY_MEMBERS_CONFIG.forEach((initialConfig) => {
+          if (!loadedMembers.find((lm) => lm.id === initialConfig.id)) {
+            const newMember = {
+              ...initialConfig,
+              level: 1,
+              xp: 0,
+              xpToNextLevel: 80,
+              currentHealth: initialConfig.baseMaxHealth,
+              equipment: JSON.parse(JSON.stringify(COMMON_STARTER_EQUIPMENT[initialConfig.className])),
+              lastAttackTime: 0
+            };
+            loadedMembers.push(newMember);
+          }
+        });
+        const loadedPartyState = {
+          ...INITIAL_PLAYER_PARTY_STATE,
+          ...parsedData.playerParty || {},
+          members: loadedMembers,
+          inventory: parsedData.playerParty?.inventory ? parsedData.playerParty.inventory.map((item) => JSON.parse(JSON.stringify(item))) : [],
+          MAX_INVENTORY_SIZE: parsedData.playerParty?.MAX_INVENTORY_SIZE || MAX_INVENTORY_SIZE,
+          ngPlusLevel: parsedData.playerParty?.ngPlusLevel || 0
+        };
+        loadedPartyState.members.forEach((m) => {
+          const initialEffectiveStats = getEffectiveMemberStatsForApp(m, loadedPartyState, true);
+          m.currentHealth = Math.min(parsedData.playerParty?.members.find((sm) => sm.id === m.id)?.currentHealth || initialEffectiveStats.maxHealth, initialEffectiveStats.maxHealth);
+        });
+        setPlayerParty(loadedPartyState);
+        const loadedStage = parsedData.currentStage || 1;
+        setCurrentStage(loadedStage);
+        setBattlesUntilBoss(parsedData.battlesUntilBoss !== void 0 ? parsedData.battlesUntilBoss : BOSS_BATTLE_THRESHOLD);
+        setIsBossBattleActive(parsedData.isBossBattleActive || false);
+        setIsStageBossDefeated(parsedData.isStageBossDefeated || false);
+        setCanStartNewGamePlus(parsedData.canStartNewGamePlus || false);
+        setIsAutoUpgradeEnabled(parsedData.isAutoUpgradeEnabled !== void 0 ? parsedData.isAutoUpgradeEnabled : true);
+        setIsAutoStageProgressionEnabled(parsedData.isAutoStageProgressionEnabled !== void 0 ? parsedData.isAutoStageProgressionEnabled : true);
+        setIsAutoEquipEnabled(parsedData.isAutoEquipEnabled !== void 0 ? parsedData.isAutoEquipEnabled : true);
+        setLastEnemyAttackTime(parsedData.lastEnemyAttackTime || 0);
+        setLastHealTime(parsedData.lastHealTime || 0);
+        if (parsedData.canStartNewGamePlus) {
+          initialEnemyToSpawn = null;
+        } else if (parsedData.isBossBattleActive) {
+          initialEnemyToSpawn = generateBossForStage(loadedStage, loadedPartyState.ngPlusLevel);
+        } else if (parsedData.battlesUntilBoss <= 0 && !parsedData.isStageBossDefeated) {
+          setIsBossBattleActive(true);
+          initialEnemyToSpawn = generateBossForStage(loadedStage, loadedPartyState.ngPlusLevel);
+        } else {
+          initialEnemyToSpawn = generateNewEnemy(loadedStage, loadedPartyState.ngPlusLevel);
+        }
+      } catch (error) {
+        console.error("\uC800\uC7A5 \uB370\uC774\uD130 \uBD88\uB7EC\uC624\uAE30 \uC2E4\uD328 (NG+):", error);
+        gameLoadedMessage = "\uC800\uC7A5 \uB370\uC774\uD130 \uC624\uB958. \uC0C8 \uBAA8\uD5D8\uC73C\uB85C \uC2DC\uC791\uD569\uB2C8\uB2E4.";
+        const freshParty = JSON.parse(JSON.stringify(INITIAL_PLAYER_PARTY_STATE));
+        freshParty.members.forEach((member) => {
+          member.currentHealth = getEffectiveMemberStatsForApp(member, freshParty, true).maxHealth;
+        });
+        setPlayerParty(freshParty);
+        setCurrentStage(1);
+        initialEnemyToSpawn = generateNewEnemy(1, 0);
+      }
+    } else {
+      gameLoadedMessage = "\uC0C8\uB85C\uC6B4 D&D \uD30C\uD2F0 \uBAA8\uD5D8\uC744 \uC2DC\uC791\uD569\uB2C8\uB2E4! \uD589\uC6B4\uC744 \uBE4C\uC5B4\uC694!";
+      const freshParty = JSON.parse(JSON.stringify(INITIAL_PLAYER_PARTY_STATE));
+      freshParty.members.forEach((member) => {
+        member.currentHealth = getEffectiveMemberStatsForApp(member, freshParty, true).maxHealth;
+      });
+      setPlayerParty(freshParty);
+      initialEnemyToSpawn = generateNewEnemy(1, 0);
+    }
+    addLogMessage(gameLoadedMessage, gameLoadedMessage.includes("\uC624\uB958") ? "error" : savedData ? "save" : "system");
+    if (initialEnemyToSpawn && !currentEnemyRef.current && !canStartNewGamePlusRef.current) {
+      setCurrentEnemy(initialEnemyToSpawn);
+    }
+  }, [addLogMessage]);
+  const saveGameState = useCallback(() => {
+    try {
+      const gameState = { playerParty: playerPartyRef.current, currentStage: currentStageRef.current, battlesUntilBoss: battlesUntilBossRef.current, isBossBattleActive: isBossBattleActiveRef.current, isStageBossDefeated: isStageBossDefeatedRef.current, canStartNewGamePlus: canStartNewGamePlusRef.current, isAutoUpgradeEnabled: isAutoUpgradeEnabledRef.current, isAutoStageProgressionEnabled: isAutoStageProgressionEnabledRef.current, isAutoEquipEnabled: isAutoEquipEnabledRef.current, lastEnemyAttackTime: lastEnemyAttackTimeRef.current, lastHealTime: lastHealTimeRef.current };
+      localStorage.setItem(IDLE_RPG_SAVE_KEY, JSON.stringify(gameState));
+      addLogMessage("\uAC8C\uC784\uC774 \uC790\uB3D9 \uC800\uC7A5\uB418\uC5C8\uC2B5\uB2C8\uB2E4.", "save");
+    } catch (error) {
+      console.error("\uAC8C\uC784 \uC800\uC7A5 \uC2E4\uD328:", error);
+      addLogMessage("\uAC8C\uC784 \uC800\uC7A5\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4.", "error");
+    }
+  }, [addLogMessage]);
+  useEffect5(() => {
+    const intervalId = setInterval(saveGameState, AUTO_SAVE_INTERVAL_MS);
+    return () => clearInterval(intervalId);
+  }, [saveGameState]);
+  useEffect5(() => {
+    window.addEventListener("beforeunload", saveGameState);
+    return () => window.removeEventListener("beforeunload", saveGameState);
+  }, [saveGameState]);
+  const getUpgradeCost = useCallback((type) => {
+    const config = UPGRADE_CONFIGS[type];
+    const party = playerPartyRef.current;
+    let level = 0;
+    switch (type) {
+      case "attack" /* Attack */:
+        level = party.partyAttackUpgradeLevel;
+        break;
+      case "defense" /* Defense */:
+        level = party.partyDefenseUpgradeLevel;
+        break;
+      case "maxHealth" /* MaxHealth */:
+        level = party.partyMaxHealthUpgradeLevel;
+        break;
+      case "attackSpeed" /* AttackSpeed */:
+        level = party.partyAttackSpeedUpgradeLevel;
+        break;
+    }
+    return Math.floor(config.baseCost * Math.pow(config.scaleFactor, level));
+  }, []);
+  const handleUpgrade = useCallback((type, isAuto = false) => {
+    const config = UPGRADE_CONFIGS[type];
+    setPlayerParty((prevParty) => {
+      let currentLevelForCostCalc = 0;
+      switch (type) {
+        case "attack" /* Attack */:
+          currentLevelForCostCalc = prevParty.partyAttackUpgradeLevel;
+          break;
+        case "defense" /* Defense */:
+          currentLevelForCostCalc = prevParty.partyDefenseUpgradeLevel;
+          break;
+        case "maxHealth" /* MaxHealth */:
+          currentLevelForCostCalc = prevParty.partyMaxHealthUpgradeLevel;
+          break;
+        case "attackSpeed" /* AttackSpeed */:
+          currentLevelForCostCalc = prevParty.partyAttackSpeedUpgradeLevel;
+          break;
+      }
+      const cost = getUpgradeCost(type);
+      if (prevParty.gold < cost) {
+        if (!isAuto)
+          addLogMessage(`${config.name} \uAC15\uD654\uC5D0 \uACE8\uB4DC\uAC00 \uBD80\uC871\uD569\uB2C8\uB2E4. (\uD544\uC694: ${formatNumber(cost)})`, "error");
+        return prevParty;
+      }
+      if (config.maxLevel !== void 0 && currentLevelForCostCalc >= config.maxLevel) {
+        if (!isAuto)
+          addLogMessage(`${config.name}\uC740(\uB294) \uC774\uBBF8 \uCD5C\uB300 \uB808\uBCA8\uC785\uB2C8\uB2E4.`, "system");
+        return prevParty;
+      }
+      let newParty = { ...prevParty, gold: prevParty.gold - cost };
+      switch (type) {
+        case "attack" /* Attack */:
+          newParty.partyAttackUpgradeLevel += 1;
+          break;
+        case "defense" /* Defense */:
+          newParty.partyDefenseUpgradeLevel += 1;
+          break;
+        case "maxHealth" /* MaxHealth */:
+          newParty.partyMaxHealthUpgradeLevel += 1;
+          newParty.members = newParty.members.map((m) => {
+            if (m.isUnlocked) {
+              const oldEffective = getEffectiveMemberStats(m, prevParty);
+              const newEffective = getEffectiveMemberStats(m, { ...prevParty, partyMaxHealthUpgradeLevel: newParty.partyMaxHealthUpgradeLevel });
+              const healthIncrease = newEffective.maxHealth - oldEffective.maxHealth;
+              return { ...m, currentHealth: Math.min(m.currentHealth + healthIncrease, newEffective.maxHealth) };
+            }
+            return m;
+          });
+          break;
+        case "attackSpeed" /* AttackSpeed */:
+          newParty.partyAttackSpeedUpgradeLevel += 1;
+          break;
+      }
+      if (!isAuto)
+        addLogMessage(`${config.name} \uAC15\uD654! (\uBE44\uC6A9: ${formatNumber(cost)} \uACE8\uB4DC)`, "system");
+      return newParty;
+    });
+  }, [addLogMessage, getUpgradeCost, getEffectiveMemberStats]);
+  useEffect5(() => {
+    if (!isAutoUpgradeEnabledRef.current)
+      return;
+    const autoUpgradeInterval = setInterval(() => {
+      const currentPartySnapshot = playerPartyRef.current;
+      let bestUpgrade = null;
+      let minCost = Infinity;
+      Object.keys(UPGRADE_CONFIGS).forEach((type) => {
+        const config = UPGRADE_CONFIGS[type];
+        let currentLevel = 0;
+        switch (type) {
+          case "attack" /* Attack */:
+            currentLevel = currentPartySnapshot.partyAttackUpgradeLevel;
+            break;
+          case "defense" /* Defense */:
+            currentLevel = currentPartySnapshot.partyDefenseUpgradeLevel;
+            break;
+          case "maxHealth" /* MaxHealth */:
+            currentLevel = currentPartySnapshot.partyMaxHealthUpgradeLevel;
+            break;
+          case "attackSpeed" /* AttackSpeed */:
+            currentLevel = currentPartySnapshot.partyAttackSpeedUpgradeLevel;
+            break;
+        }
+        if (config.maxLevel !== void 0 && currentLevel >= config.maxLevel)
+          return;
+        const cost = getUpgradeCost(type);
+        if (currentPartySnapshot.gold >= cost && cost < minCost) {
+          minCost = cost;
+          bestUpgrade = type;
+        }
+      });
+      if (bestUpgrade)
+        handleUpgrade(bestUpgrade, true);
+    }, AUTO_UPGRADE_INTERVAL_MS);
+    return () => clearInterval(autoUpgradeInterval);
+  }, [isAutoUpgradeEnabled, handleUpgrade, getUpgradeCost]);
+  const handleRecruitMember = useCallback((memberId) => {
+    setPlayerParty((prevParty) => {
+      const memberToRecruit = prevParty.members.find((m) => m.id === memberId);
+      if (!memberToRecruit || memberToRecruit.isUnlocked)
+        return prevParty;
+      if (memberToRecruit.unlockStageRequirement && currentStageRef.current < memberToRecruit.unlockStageRequirement) {
+        addLogMessage(`${memberToRecruit.name} \uC601\uC785 \uC870\uAC74 \uBBF8\uB2EC\uC131 (\uC2A4\uD14C\uC774\uC9C0 ${memberToRecruit.unlockStageRequirement} \uD544\uC694).`, "error");
+        return prevParty;
+      }
+      addLogMessage(`${memberToRecruit.name}\uC774(\uAC00) \uD30C\uD2F0\uC5D0 \uD569\uB958\uD588\uC2B5\uB2C8\uB2E4!`, "party");
+      return { ...prevParty, members: prevParty.members.map((m) => m.id === memberId ? { ...m, isUnlocked: true, isActiveInCombat: true, currentHealth: getEffectiveMemberStats(m, prevParty).maxHealth } : m) };
+    });
+  }, [addLogMessage, getEffectiveMemberStats]);
+  const handleNextStage = useCallback(() => {
+    if (canStartNewGamePlusRef.current) {
+      addLogMessage("\uB2E4\uC74C \uD68C\uCC28\uB97C \uC2DC\uC791\uD574\uC57C \uD569\uB2C8\uB2E4.", "system");
+      return;
+    }
+    const activeMembers = playerPartyRef.current.members.filter((m) => m.isUnlocked && m.isActiveInCombat);
+    if (activeMembers.length === 0 && !isPartyWipedRef.current) {
+      addLogMessage("\uD65C\uB3D9 \uAC00\uB2A5\uD55C \uD30C\uD2F0\uC6D0\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. \uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uC9C4\uD589\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.", "error");
+      return;
+    }
+    if (!isStageBossDefeatedRef.current) {
+      addLogMessage("\uD604\uC7AC \uC2A4\uD14C\uC774\uC9C0\uC758 \uBCF4\uC2A4\uB97C \uCC98\uCE58\uD574\uC57C \uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uC774\uB3D9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.", "error");
+      return;
+    }
+    const newStage = currentStageRef.current + 1;
+    setCurrentStage(newStage);
+    addLogMessage(`\uC2A4\uD14C\uC774\uC9C0 ${newStage}(\uC73C)\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.`, "system");
+    setPlayerParty((prevParty) => ({ ...prevParty, members: prevParty.members.map((m) => {
+      if (m.isUnlocked) {
+        const effectiveStats = getEffectiveMemberStats(m, prevParty);
+        return { ...m, isActiveInCombat: true, currentHealth: effectiveStats.maxHealth, lastAttackTime: 0 };
+      }
+      return m;
+    }) }));
+    setIsStageBossDefeated(false);
+    setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
+    setIsBossBattleActive(false);
+    const newEnemy = generateNewEnemy(newStage, playerPartyRef.current.ngPlusLevel);
+    setCurrentEnemy(newEnemy);
+    addLogMessage(`${newEnemy.name} \uB4F1\uC7A5!`, "system");
+    saveGameState();
+  }, [addLogMessage, getEffectiveMemberStats, saveGameState]);
+  const handlePreviousStage = useCallback(() => {
+    if (currentStageRef.current <= 1) {
+      addLogMessage("\uC774\uBBF8 \uCCAB \uBC88\uC9F8 \uC2A4\uD14C\uC774\uC9C0\uC785\uB2C8\uB2E4.", "system");
+      return;
+    }
+    if (canStartNewGamePlusRef.current) {
+      addLogMessage("\uB2E4\uC74C \uD68C\uCC28\uB97C \uC2DC\uC791\uD574\uC57C \uD569\uB2C8\uB2E4.", "system");
+      return;
+    }
+    if (isPartyWipedRef.current) {
+      addLogMessage("\uD30C\uD2F0\uAC00 \uC804\uBA78 \uC0C1\uD0DC\uC785\uB2C8\uB2E4. \uC774\uC804 \uC2A4\uD14C\uC774\uC9C0\uB85C \uC774\uB3D9\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.", "error");
+      return;
+    }
+    const activeMembers = playerPartyRef.current.members.filter((m) => m.isUnlocked && m.isActiveInCombat);
+    if (activeMembers.length === 0) {
+      addLogMessage("\uD65C\uB3D9 \uAC00\uB2A5\uD55C \uD30C\uD2F0\uC6D0\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. \uC774\uC804 \uC2A4\uD14C\uC774\uC9C0\uB85C \uC774\uB3D9\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.", "error");
+      return;
+    }
+    const newStage = currentStageRef.current - 1;
+    setCurrentStage(newStage);
+    addLogMessage(`\uC2A4\uD14C\uC774\uC9C0 ${newStage}(\uC73C)\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4.`, "system");
+    setPlayerParty((prevParty) => ({ ...prevParty, members: prevParty.members.map((m) => {
+      if (m.isUnlocked) {
+        const effectiveStats = getEffectiveMemberStats(m, prevParty);
+        return { ...m, isActiveInCombat: true, currentHealth: effectiveStats.maxHealth, lastAttackTime: 0 };
+      }
+      return m;
+    }) }));
+    setIsStageBossDefeated(true);
+    setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
+    setIsBossBattleActive(false);
+    const newEnemy = generateNewEnemy(newStage, playerPartyRef.current.ngPlusLevel);
+    setCurrentEnemy(newEnemy);
+    addLogMessage(`${newEnemy.name} \uB4F1\uC7A5!`, "system");
+    saveGameState();
+  }, [addLogMessage, getEffectiveMemberStats, saveGameState]);
+  const handleStartNewGamePlus = useCallback(() => {
+    const currentParty = playerPartyRef.current;
+    const newNgPlusLevel = currentParty.ngPlusLevel + 1;
+    addLogMessage(`NG+${newNgPlusLevel} \uBAA8\uD5D8\uC744 \uC2DC\uC791\uD569\uB2C8\uB2E4! \uC801\uB4E4\uC774 \uB354\uC6B1 \uAC15\uB825\uD574\uC84C\uC2B5\uB2C8\uB2E4.`, "system");
+    setPlayerParty((prevParty) => ({
+      ...prevParty,
+      ngPlusLevel: newNgPlusLevel,
+      members: prevParty.members.map((m) => {
+        if (m.isUnlocked) {
+          const effectiveStats = getEffectiveMemberStats(m, { ...prevParty, ngPlusLevel: newNgPlusLevel });
+          return { ...m, currentHealth: effectiveStats.maxHealth, isActiveInCombat: true, lastAttackTime: 0 };
+        }
+        return m;
+      })
+    }));
+    setCurrentStage(1);
+    setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
+    setIsBossBattleActive(false);
+    setIsStageBossDefeated(false);
+    setCanStartNewGamePlus(false);
+    setCurrentEnemy(generateNewEnemy(1, newNgPlusLevel));
+    saveGameState();
+  }, [addLogMessage, getEffectiveMemberStats, saveGameState]);
+  const handleSelectInventoryItem = useCallback((itemId) => {
+    console.log("\uC544\uC774\uD15C \uC120\uD0DD\uB428:", itemId);
+    setSelectedInventoryItemId(itemId);
+  }, []);
+  const handleOpenEquipmentModal = useCallback((memberId, slotType, inventoryItemId) => {
+    console.log("handleOpenEquipmentModal called with:", { memberId, slotType, inventoryItemId });
+    setSelectedInventoryItemId(inventoryItemId);
+    setEquipmentModalState({ isOpen: true, memberId, slotType, inventoryItemId });
+  }, []);
+  const handleCloseEquipmentModal = useCallback(() => {
+    setEquipmentModalState({ isOpen: false, memberId: null, slotType: null, inventoryItemId: null });
+    setSelectedInventoryItemId(null);
+  }, []);
+  const handleEquipItemToMember = useCallback((memberId, slotToEquip, itemIdToEquip) => {
+    setPlayerParty((prevParty) => {
+      const newParty = JSON.parse(JSON.stringify(prevParty));
+      const member = newParty.members.find((m) => m.id === memberId);
+      const itemFromInventory = newParty.inventory.find((item) => item.id === itemIdToEquip);
+      if (!member || !itemFromInventory) {
+        addLogMessage("\uC7A5\uCC29 \uC624\uB958: \uBA64\uBC84 \uB610\uB294 \uC544\uC774\uD15C\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.", "error");
+        return prevParty;
+      }
+      if (!isItemEquippable(itemFromInventory, member.className, slotToEquip)) {
+        addLogMessage(`${member.name}\uC740(\uB294) ${itemFromInventory.name}\uC744(\uB97C) ${getSlotDisplayName(slotToEquip)} \uC2AC\uB86F\uC5D0 \uC7A5\uCC29\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.`, "error");
+        return prevParty;
+      }
+      const currentlyEquippedItem = member.equipment[slotToEquip];
+      newParty.inventory = newParty.inventory.filter((item) => item.id !== itemIdToEquip);
+      member.equipment[slotToEquip] = itemFromInventory;
+      if (currentlyEquippedItem) {
+        if (newParty.inventory.length < newParty.MAX_INVENTORY_SIZE) {
+          newParty.inventory.push(currentlyEquippedItem);
+          addLogMessage(`${member.name}\uC758 ${getSlotDisplayName(slotToEquip)} \uC2AC\uB86F\uC5D0\uC11C ${currentlyEquippedItem.name}\uC744(\uB97C) \uBC97\uACE0 ${itemFromInventory.name}\uC744(\uB97C) \uC7A5\uCC29\uD588\uC2B5\uB2C8\uB2E4.`, "loot");
+        } else {
+          addLogMessage(`${itemFromInventory.name} \uC7A5\uCC29. \uC774\uC804 \uC544\uC774\uD15C ${currentlyEquippedItem.name}\uC740(\uB294) \uAC00\uBC29 \uACF5\uAC04 \uBD80\uC871\uC73C\uB85C \uC18C\uBA78\uB418\uC5C8\uC2B5\uB2C8\uB2E4!`, "error");
+        }
+      } else {
+        addLogMessage(`${member.name}\uC774(\uAC00) ${itemFromInventory.name}\uC744(\uB97C) ${getSlotDisplayName(slotToEquip)} \uC2AC\uB86F\uC5D0 \uC7A5\uCC29\uD588\uC2B5\uB2C8\uB2E4.`, "loot");
+      }
+      const newEffectiveStats = getEffectiveMemberStats(member, newParty);
+      if (member.currentHealth > newEffectiveStats.maxHealth)
+        member.currentHealth = newEffectiveStats.maxHealth;
+      else if (member.currentHealth < newEffectiveStats.maxHealth && itemFromInventory.maxHealthMod && itemFromInventory.maxHealthMod > 0) {
+        const oldMaxHealth = getEffectiveMemberStats(prevParty.members.find((m) => m.id === memberId), prevParty).maxHealth;
+        member.currentHealth += newEffectiveStats.maxHealth - oldMaxHealth;
+        member.currentHealth = Math.min(member.currentHealth, newEffectiveStats.maxHealth);
+      }
+      return newParty;
+    });
+    handleCloseEquipmentModal();
+  }, [addLogMessage, getEffectiveMemberStats, handleCloseEquipmentModal]);
+  const calculateWeaponScore = (item, baseDiceStr, baseDmgBonus, baseAtkBonus) => {
+    const diceStr = item?.weaponDamageDiceStrOverride || baseDiceStr;
+    const parsed = parseDiceString(diceStr);
+    const avgRoll = parsed ? parsed.count * (parsed.sides + 1) / 2 : 0;
+    const damageBonus = (item?.damageBonusMod || 0) + baseDmgBonus;
+    const attackBonus = (item?.attackBonusMod || 0) + baseAtkBonus;
+    return avgRoll + damageBonus + attackBonus / 2;
+  };
+  const handleAutoEquipItem = useCallback((itemToAutoEquip) => {
+    setPlayerParty((prevParty) => {
+      if (!isAutoEquipEnabledRef.current)
+        return prevParty;
+      let itemWasEquippedThisCall = false;
+      const newParty = JSON.parse(JSON.stringify(prevParty));
+      for (let i = 0; i < newParty.members.length; i++) {
+        const member = newParty.members[i];
+        if (itemWasEquippedThisCall)
+          break;
+        if (!member.isUnlocked || !member.isActiveInCombat)
+          continue;
+        const slotToEquip = itemToAutoEquip.slot;
+        if (isItemEquippable(itemToAutoEquip, member.className, slotToEquip)) {
+          const currentEquippedItem = member.equipment[slotToEquip];
+          let isUpgrade = false;
+          const rarityOrder = ["Common", "Uncommon", "Rare", "Epic"];
+          if (!currentEquippedItem) {
+            isUpgrade = true;
+          } else if (rarityOrder.indexOf(itemToAutoEquip.rarity) > rarityOrder.indexOf(currentEquippedItem.rarity)) {
+            isUpgrade = true;
+          } else if (itemToAutoEquip.rarity === currentEquippedItem.rarity) {
+            if (slotToEquip === "weapon") {
+              const memberBaseStats = getEffectiveMemberStats(member, newParty);
+              const newItemScore = calculateWeaponScore(itemToAutoEquip, member.baseWeaponDamageDiceStr, memberBaseStats.damageBonus - (currentEquippedItem?.damageBonusMod || 0), memberBaseStats.attackBonus - (currentEquippedItem?.attackBonusMod || 0));
+              const currentItemScore = calculateWeaponScore(currentEquippedItem, member.baseWeaponDamageDiceStr, memberBaseStats.damageBonus - (currentEquippedItem?.damageBonusMod || 0), memberBaseStats.attackBonus - (currentEquippedItem?.attackBonusMod || 0));
+              if (newItemScore > currentItemScore * 1.05)
+                isUpgrade = true;
+            } else if (slotToEquip === "armor" || slotToEquip === "shield") {
+              if ((itemToAutoEquip.armorClassMod || 0) > (currentEquippedItem.armorClassMod || 0))
+                isUpgrade = true;
+              if ((itemToAutoEquip.maxHealthMod || 0) > (currentEquippedItem.maxHealthMod || 0) + 5)
+                isUpgrade = true;
+            } else if (slotToEquip === "accessory") {
+              if ((itemToAutoEquip.maxHealthMod || 0) > (currentEquippedItem.maxHealthMod || 0))
+                isUpgrade = true;
+              if (itemToAutoEquip.attackBonusMod && (!currentEquippedItem.attackBonusMod || itemToAutoEquip.attackBonusMod > currentEquippedItem.attackBonusMod))
+                isUpgrade = true;
+              if (itemToAutoEquip.damageBonusMod && (!currentEquippedItem.damageBonusMod || itemToAutoEquip.damageBonusMod > currentEquippedItem.damageBonusMod))
+                isUpgrade = true;
+            }
+          }
+          if (isUpgrade) {
+            const itemIndexInInventory = newParty.inventory.findIndex((invItem) => invItem.id === itemToAutoEquip.id);
+            if (itemIndexInInventory > -1) {
+              newParty.inventory.splice(itemIndexInInventory, 1);
+            } else {
+              continue;
+            }
+            if (currentEquippedItem) {
+              if (newParty.inventory.length < newParty.MAX_INVENTORY_SIZE) {
+                newParty.inventory.push(currentEquippedItem);
+              } else {
+                addLogMessage(`\uC790\uB3D9 \uC7A5\uCC29 \uC911 \uACF5\uAC04 \uBD80\uC871: \uC774\uC804 \uC544\uC774\uD15C ${currentEquippedItem.name} \uC18C\uBA78.`, "error");
+              }
+            }
+            member.equipment[slotToEquip] = itemToAutoEquip;
+            addLogMessage(`${member.name}\uC5D0\uAC8C ${itemToAutoEquip.name}(${itemToAutoEquip.rarity}) \uC790\uB3D9 \uC7A5\uCC29\uB428.`, "loot");
+            createFloatingText(`\uC790\uB3D9 \uC7A5\uCC29!`, "info", member.id);
+            itemWasEquippedThisCall = true;
+            const newEffectiveStats = getEffectiveMemberStats(member, newParty);
+            if (member.currentHealth > newEffectiveStats.maxHealth)
+              member.currentHealth = newEffectiveStats.maxHealth;
+            else if (itemToAutoEquip.maxHealthMod && itemToAutoEquip.maxHealthMod > 0) {
+              const oldMaxHealth = getEffectiveMemberStats(prevParty.members.find((m) => m.id === member.id), prevParty).maxHealth;
+              const healthIncrease = newEffectiveStats.maxHealth - oldMaxHealth;
+              member.currentHealth = Math.min(newEffectiveStats.maxHealth, member.currentHealth + healthIncrease);
+            }
+          }
+        }
+      }
+      return itemWasEquippedThisCall ? newParty : prevParty;
+    });
+  }, [addLogMessage, createFloatingText, getEffectiveMemberStats]);
+  const executeGameTickLogic = useCallback(() => {
+    if (isPartyWipedRef.current || canStartNewGamePlusRef.current)
+      return;
+    const now = Date.now();
+    const enemy = currentEnemyRef.current;
+    setPlayerParty((prevParty) => {
+      let enemyDamagedThisTick = false;
+      let enemyCurrentHealth = enemy?.currentHealth || 0;
+      let partyStateAfterMemberActions = { ...prevParty };
+      partyStateAfterMemberActions.members = prevParty.members.map((member) => {
+        if (!member.isUnlocked || !member.isActiveInCombat || !enemy || enemyCurrentHealth <= 0)
+          return member;
+        const effectiveStats = getEffectiveMemberStats(member, prevParty);
+        if (now - (member.lastAttackTime || 0) >= 1e3 / effectiveStats.attackSpeed) {
+          const d20Roll = rollD20();
+          const totalToHit = d20Roll + effectiveStats.attackBonus;
+          const isCritHit = d20Roll === CRITICAL_HIT_ROLL;
+          const isCritMiss = d20Roll === CRITICAL_MISS_ROLL;
+          const isHit = !isCritMiss && (isCritHit || totalToHit >= enemy.armorClass);
+          let resultType = isCritHit ? "crit_hit" : isHit ? "hit" : isCritMiss ? "crit_miss" : "miss";
+          showDiceRollAnimation({ attackerName: member.name, targetName: enemy.name, d20Roll, bonus: effectiveStats.attackBonus, totalToHit, targetAC: enemy.armorClass, resultType });
+          const logDetails = `(d20: ${d20Roll} + \uBCF4\uB108\uC2A4: ${effectiveStats.attackBonus} = ${totalToHit} vs AC ${enemy.armorClass})`;
+          if (isHit) {
+            const diceParts = parseDiceString(effectiveStats.weaponDamageDiceStr);
+            let damageDealt = 0;
+            let damageRollDetail = "";
+            if (diceParts) {
+              let baseDamageRoll = rollDice(diceParts.count, diceParts.sides);
+              damageRollDetail = `${diceParts.count}d${diceParts.sides}: ${baseDamageRoll}`;
+              if (isCritHit) {
+                const critDamageRoll = rollDice(diceParts.count, diceParts.sides);
+                baseDamageRoll += critDamageRoll;
+                damageRollDetail += ` + \uCD94\uAC00 ${critDamageRoll} (\uCE58\uBA85\uD0C0!)`;
+              }
+              damageDealt = Math.max(1, baseDamageRoll + effectiveStats.damageBonus);
+            } else {
+              damageDealt = Math.max(1, effectiveStats.damageBonus);
+              damageRollDetail = "\uBB34\uAE30 \uC624\uB958";
+            }
+            createFloatingText(`${damageDealt}`, isCritHit ? "crit_damage" : "damage", "enemy");
+            enemyCurrentHealth -= damageDealt;
+            enemyDamagedThisTick = true;
+            addLogMessage(`${isCritHit ? "\u2728\uCE58\uBA85\uD0C0! " : ""}${member.name} \u2192 ${enemy.name}: ${formatNumber(damageDealt)} \uD53C\uD574. ${logDetails}`, isCritHit ? "crit" : "combat", `\uD53C\uD574 \uC0C1\uC138: ${damageRollDetail} + \uBCF4\uB108\uC2A4: ${effectiveStats.damageBonus}`);
+          } else {
+            createFloatingText("\uBE57\uB098\uAC10!", "miss", "enemy");
+            addLogMessage(`${member.name}\uC758 \uACF5\uACA9\uC774 ${enemy.name}\uC5D0\uAC8C \uBE57\uB098\uAC14\uC2B5\uB2C8\uB2E4! ${logDetails}`, "combat");
+          }
+          return { ...member, lastAttackTime: now };
+        }
+        return member;
+      });
+      let finalPartyState = partyStateAfterMemberActions;
+      if (enemyDamagedThisTick && enemy) {
+        setCurrentEnemy((prevEnemy) => prevEnemy ? { ...prevEnemy, currentHealth: Math.max(0, enemyCurrentHealth) } : null);
+        if (enemyCurrentHealth <= 0) {
+          addLogMessage(`${enemy.name} \uCC98\uCE58!`, "reward");
+          createFloatingText(`+${formatNumber(enemy.goldReward)} G`, "info", "enemy");
+          createFloatingText(`+${formatNumber(enemy.xpReward)} XP`, "info", "enemy");
+          const loot = getLootDrop(currentStageRef.current, enemy.isBoss || false);
+          if (loot) {
+            if (finalPartyState.inventory.length < finalPartyState.MAX_INVENTORY_SIZE) {
+              finalPartyState.inventory = [...finalPartyState.inventory, loot];
+              addLogMessage(`\uC544\uC774\uD15C \uD68D\uB4DD: ${loot.name} (${loot.rarity})!`, "loot");
+              createFloatingText(`${loot.name} \uD68D\uB4DD!`, "info", "enemy");
+              if (isAutoEquipEnabledRef.current) {
+                handleAutoEquipItem(loot);
+              }
+            } else {
+              addLogMessage(`\uC544\uC774\uD15C ${loot.name}\uC744(\uB97C) \uBC1C\uACAC\uD588\uC9C0\uB9CC \uAC00\uBC29\uC774 \uAC00\uB4DD \uCC3C\uC2B5\uB2C8\uB2E4!`, "error");
+            }
+          }
+          const activeAttackers = finalPartyState.members.filter((m) => m.isUnlocked && m.isActiveInCombat);
+          const xpPerMember = activeAttackers.length > 0 ? Math.floor(enemy.xpReward / activeAttackers.length) : 0;
+          finalPartyState.gold += enemy.goldReward;
+          finalPartyState.members = finalPartyState.members.map((member) => {
+            if (activeAttackers.find((a) => a.id === member.id)) {
+              let newXp = member.xp + xpPerMember;
+              let newLevel = member.level;
+              let newBaseMaxHealth = member.baseMaxHealth;
+              let newBaseAttack = member.baseAttack;
+              let newBaseDefense = member.baseDefense;
+              let newXpToNextLevel = member.xpToNextLevel;
+              let memberCurrentHealth = member.currentHealth;
+              while (newXp >= newXpToNextLevel) {
+                newXp -= newXpToNextLevel;
+                newLevel += 1;
+                newBaseMaxHealth += STAT_INCREASE_PER_MEMBER_LEVEL.maxHealth;
+                newBaseAttack += STAT_INCREASE_PER_MEMBER_LEVEL.attack;
+                newBaseDefense += STAT_INCREASE_PER_MEMBER_LEVEL.defense;
+                newXpToNextLevel = Math.floor(newXpToNextLevel * XP_TO_NEXT_LEVEL_MULTIPLIER_MEMBER);
+                const tempMemberForStats = { ...member, baseMaxHealth: newBaseMaxHealth, baseAttack: newBaseAttack, baseDefense: newBaseDefense, level: newLevel };
+                memberCurrentHealth = getEffectiveMemberStats(tempMemberForStats, finalPartyState).maxHealth;
+                addLogMessage(`${member.name} \uB808\uBCA8 \uC5C5! ${newLevel}\uB808\uBCA8 \uB2EC\uC131.`, "party");
+                createFloatingText("\uB808\uBCA8 \uC5C5!", "info", member.id);
+              }
+              return { ...member, xp: newXp, level: newLevel, baseMaxHealth: newBaseMaxHealth, baseAttack: newBaseAttack, baseDefense: newBaseDefense, xpToNextLevel: newXpToNextLevel, currentHealth: memberCurrentHealth };
+            }
+            return member;
+          });
+          if (isBossBattleActiveRef.current && enemy.isBoss) {
+            if (currentStageRef.current === FINAL_STAGE_FOR_NG_PLUS) {
+              addLogMessage(`\uCD5C\uC885 \uBCF4\uC2A4 ${enemy.name} \uACA9\uD30C! \uB2E4\uC74C \uD68C\uCC28 \uC9C4\uD589\uC774 \uAC00\uB2A5\uD569\uB2C8\uB2E4.`, "reward");
+              setCanStartNewGamePlus(true);
+            } else {
+              addLogMessage(`\uBCF4\uC2A4 ${enemy.name} \uACA9\uD30C! \uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uC9C4\uD589 \uAC00\uB2A5.`, "reward");
+            }
+            setIsBossBattleActive(false);
+            setCurrentEnemy(null);
+            setIsStageBossDefeated(true);
+            saveGameState();
+          } else {
+            setBattlesUntilBoss((prevCount) => {
+              const newCount = prevCount - 1;
+              if (newCount <= 0 && !isStageBossDefeatedRef.current) {
+                setIsBossBattleActive(true);
+                const boss = generateBossForStage(currentStageRef.current, finalPartyState.ngPlusLevel);
+                setCurrentEnemy(boss);
+                addLogMessage(`\uAC15\uB825\uD55C ${boss.name} \uCD9C\uD604!`, "system");
+              } else {
+                const newRegularEnemy = generateNewEnemy(currentStageRef.current, finalPartyState.ngPlusLevel);
+                setCurrentEnemy(newRegularEnemy);
+                addLogMessage(`${newRegularEnemy.name} \uB4F1\uC7A5! (\uBCF4\uC2A4\uAE4C\uC9C0 ${BOSS_BATTLE_THRESHOLD - newCount}/${BOSS_BATTLE_THRESHOLD})`, "system");
+              }
+              return newCount;
+            });
+            saveGameState();
+          }
+        }
+      }
+      if (now - lastEnemyAttackTimeRef.current >= ENEMY_ATTACK_INTERVAL_MS) {
+        if (enemy && enemyCurrentHealth > 0 && finalPartyState.members.some((m) => m.isUnlocked && m.isActiveInCombat)) {
+          const targetableMembers = finalPartyState.members.filter((m) => m.isUnlocked && m.isActiveInCombat);
+          if (targetableMembers.length > 0) {
+            const targetMember = targetableMembers[Math.floor(Math.random() * targetableMembers.length)];
+            const effectiveTargetStats = getEffectiveMemberStats(targetMember, finalPartyState);
+            const d20Roll = rollD20();
+            const totalToHit = d20Roll + enemy.attackBonus;
+            const isCritHit = d20Roll === CRITICAL_HIT_ROLL;
+            const isCritMiss = d20Roll === CRITICAL_MISS_ROLL;
+            const isHit = !isCritMiss && (isCritHit || totalToHit >= effectiveTargetStats.armorClass);
+            let resultType = isCritHit ? "crit_hit" : isHit ? "hit" : isCritMiss ? "crit_miss" : "miss";
+            showDiceRollAnimation({ attackerName: enemy.name, targetName: targetMember.name, d20Roll, bonus: enemy.attackBonus, totalToHit, targetAC: effectiveTargetStats.armorClass, resultType });
+            const logDetails = `(d20: ${d20Roll} + \uBCF4\uB108\uC2A4: ${enemy.attackBonus} = ${totalToHit} vs AC ${effectiveTargetStats.armorClass})`;
+            let newTargetHealth = targetMember.currentHealth;
+            if (isHit) {
+              const diceParts = parseDiceString(enemy.weaponDamageDiceStr);
+              let damageDealt = 0;
+              let damageRollDetail = "";
+              if (diceParts) {
+                let baseDamageRoll = rollDice(diceParts.count, diceParts.sides);
+                damageRollDetail = `${diceParts.count}d${diceParts.sides}: ${baseDamageRoll}`;
+                if (isCritHit) {
+                  const critDamageRoll = rollDice(diceParts.count, diceParts.sides);
+                  baseDamageRoll += critDamageRoll;
+                  damageRollDetail += ` + \uCD94\uAC00 ${critDamageRoll} (\uCE58\uBA85\uD0C0!)`;
+                }
+                damageDealt = Math.max(1, baseDamageRoll + enemy.damageBonus);
+              } else {
+                damageDealt = Math.max(1, enemy.damageBonus);
+                damageRollDetail = "\uBB34\uAE30 \uC624\uB958";
+              }
+              newTargetHealth -= damageDealt;
+              createFloatingText(`${damageDealt}`, isCritHit ? "crit_damage" : "damage", targetMember.id);
+              addLogMessage(`${isCritHit ? "\u{1F4A5}\uC801 \uCE58\uBA85\uD0C0! " : ""}${enemy.name} \u2192 ${targetMember.name}: ${formatNumber(damageDealt)} \uD53C\uD574 (\uCCB4\uB825: ${formatNumber(Math.max(0, newTargetHealth))}/${formatNumber(effectiveTargetStats.maxHealth)}). ${logDetails}`, isCritHit ? "crit" : "error", `\uD53C\uD574 \uC0C1\uC138: ${damageRollDetail} + \uBCF4\uB108\uC2A4: ${enemy.damageBonus}`);
+            } else {
+              createFloatingText("\uBE57\uB098\uAC10!", "miss", targetMember.id);
+              addLogMessage(`${enemy.name}\uC758 \uACF5\uACA9\uC774 ${targetMember.name}\uC5D0\uAC8C \uBE57\uB098\uAC14\uC2B5\uB2C8\uB2E4! ${logDetails}`, "combat");
+            }
+            finalPartyState.members = finalPartyState.members.map((m) => {
+              if (m.id === targetMember.id) {
+                const updatedMemberState = { ...m, currentHealth: Math.max(0, newTargetHealth) };
+                if (updatedMemberState.currentHealth <= 0 && m.isActiveInCombat) {
+                  updatedMemberState.isActiveInCombat = false;
+                  addLogMessage(`${m.name}\uC774(\uAC00) \uC4F0\uB7EC\uC84C\uC2B5\uB2C8\uB2E4!`, "party");
+                  createFloatingText("\uC4F0\uB7EC\uC9D0!", "ko", m.id);
+                }
+                return updatedMemberState;
+              }
+              return m;
+            });
+            if (finalPartyState.members.every((m) => !m.isUnlocked || !m.isActiveInCombat)) {
+              setIsPartyWiped(true);
+              addLogMessage("\uD30C\uD2F0\uAC00 \uC804\uBA78\uD588\uC2B5\uB2C8\uB2E4! \uC7A0\uC2DC \uD6C4 \uBD80\uD65C\uD569\uB2C8\uB2E4...", "error");
+              setTimeout(() => {
+                setPlayerParty((currentWipedParty) => {
+                  const revivedMembers = currentWipedParty.members.map((mem) => {
+                    if (mem.isUnlocked) {
+                      const effStats = getEffectiveMemberStats(mem, currentWipedParty);
+                      return { ...mem, currentHealth: effStats.maxHealth * PARTY_WIPE_REVIVAL_HEALTH_PERCENT, isActiveInCombat: true, lastAttackTime: 0 };
+                    }
+                    return mem;
+                  });
+                  addLogMessage("\uD30C\uD2F0\uAC00 \uBD80\uD65C\uD588\uC2B5\uB2C8\uB2E4!", "party");
+                  revivedMembers.filter((m) => m.isUnlocked).forEach((rm) => createFloatingText("\uBD80\uD65C!", "heal", rm.id));
+                  if (isBossBattleActiveRef.current) {
+                    setIsBossBattleActive(false);
+                    setBattlesUntilBoss(BOSS_BATTLE_THRESHOLD);
+                    setCurrentEnemy(generateNewEnemy(currentStageRef.current, currentWipedParty.ngPlusLevel));
+                    addLogMessage("\uBCF4\uC2A4 \uC804\uD22C \uC2E4\uD328. \uC77C\uBC18 \uBAAC\uC2A4\uD130\uBD80\uD130 \uB2E4\uC2DC \uC2DC\uC791\uD569\uB2C8\uB2E4.", "system");
+                  }
+                  const partyAfterRevival = { ...currentWipedParty, members: revivedMembers };
+                  saveGameState();
+                  return partyAfterRevival;
+                });
+                setIsPartyWiped(false);
+              }, PARTY_WIPE_REVIVAL_DELAY_MS);
+            }
+          }
+        }
+        setLastEnemyAttackTime(now);
+      }
+      if (now - lastHealTimeRef.current >= 1e3) {
+        finalPartyState.members = finalPartyState.members.map((member) => {
+          if (member.isUnlocked && member.isActiveInCombat && member.currentHealth > 0) {
+            const effectiveStats = getEffectiveMemberStats(member, finalPartyState);
+            if (member.currentHealth < effectiveStats.maxHealth) {
+              const healAmount = Math.max(1, Math.floor(effectiveStats.maxHealth * (PARTY_MEMBER_HEALTH_REGEN_PERCENT_PER_SECOND / 100)));
+              return { ...member, currentHealth: Math.min(effectiveStats.maxHealth, member.currentHealth + healAmount) };
+            }
+          }
+          return member;
+        });
+        setLastHealTime(now);
+      }
+      return finalPartyState;
+    });
+  }, [addLogMessage, getEffectiveMemberStats, createFloatingText, showDiceRollAnimation, saveGameState, handleAutoEquipItem]);
+  useEffect5(() => {
+    const intervalId = setInterval(executeGameTickLogic, GAME_TICK_INTERVAL_MS);
+    return () => clearInterval(intervalId);
+  }, [executeGameTickLogic]);
+  useEffect5(() => {
+    if (isStageBossDefeatedRef.current && !isBossBattleActiveRef.current && !currentEnemyRef.current && isAutoStageProgressionEnabledRef.current && playerPartyRef.current.members.some((m) => m.isUnlocked && m.isActiveInCombat) && !isPartyWipedRef.current && !canStartNewGamePlusRef.current) {
+      const timeoutId = setTimeout(() => {
+        if (isStageBossDefeatedRef.current && isAutoStageProgressionEnabledRef.current && playerPartyRef.current.members.some((m) => m.isUnlocked && m.isActiveInCombat) && !isPartyWipedRef.current && !canStartNewGamePlusRef.current) {
+          addLogMessage("\uC2A4\uD14C\uC774\uC9C0 \uC790\uB3D9 \uC774\uB3D9: \uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uC9C4\uD589\uD569\uB2C8\uB2E4.", "system");
+          handleNextStage();
+        }
+      }, 750);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isStageBossDefeated, isBossBattleActive, currentEnemy, isAutoStageProgressionEnabled, handleNextStage, addLogMessage, canStartNewGamePlus]);
+  const toggleAutoUpgrade = () => setIsAutoUpgradeEnabled((prev) => !prev);
+  const toggleAutoStageProgression = () => setIsAutoStageProgressionEnabled((prev) => !prev);
+  const toggleAutoEquip = () => setIsAutoEquipEnabled((prev) => !prev);
+  const handleForceGameTick = useCallback(() => {
+    if (isPartyWipedRef.current || canStartNewGamePlusRef.current) {
+      addLogMessage("\uD30C\uD2F0 \uC804\uBA78 \uB610\uB294 NG+ \uB300\uAE30 \uC911\uC5D0\uB294 \uAC15\uC81C \uC9C4\uD589\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.", "error");
+      return;
+    }
+    addLogMessage("\uAC15\uC81C \uC9C4\uD589 \uBC84\uD2BC \uC0AC\uC6A9\uB428. \uB2E4\uC74C \uAC8C\uC784 \uD2F1\uC744 \uC218\uB3D9\uC73C\uB85C \uC2E4\uD589\uD569\uB2C8\uB2E4.", "system");
+    executeGameTickLogic();
+  }, [executeGameTickLogic, addLogMessage]);
+  const getBossStatusMessage = () => {
+    if (isPartyWiped)
+      return /* @__PURE__ */ jsx10("span", { className: "text-red-500 animate-ping", children: "\uD30C\uD2F0 \uC804\uBA78! \uBD80\uD65C \uB300\uAE30 \uC911..." });
+    if (canStartNewGamePlus)
+      return /* @__PURE__ */ jsx10("span", { className: "text-yellow-300 font-semibold", children: "\uCD5C\uC885 \uBCF4\uC2A4 \uACA9\uD30C! \uB2E4\uC74C \uD68C\uCC28 \uC9C4\uD589 \uAC00\uB2A5." });
+    if (isBossBattleActive)
+      return /* @__PURE__ */ jsx10("span", { className: "text-red-400 font-semibold animate-pulse", children: "\u{1F525} \uBCF4\uC2A4 \uC804\uD22C \uC911! \u{1F525}" });
+    if (isStageBossDefeated)
+      return /* @__PURE__ */ jsx10("span", { className: "text-green-400", children: "\uBCF4\uC2A4 \uCC98\uCE58 \uC644\uB8CC! \uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uC774\uB3D9\uD558\uC138\uC694." });
+    const battlesCompleted = BOSS_BATTLE_THRESHOLD - Math.max(0, battlesUntilBoss);
+    return `\uBCF4\uC2A4 \uCD9C\uD604\uAE4C\uC9C0: ${battlesCompleted} / ${BOSS_BATTLE_THRESHOLD} \uC804\uD22C \uC644\uB8CC`;
+  };
+  const canManuallyProgressToNextStage = playerParty.members.some((m) => m.isUnlocked && m.isActiveInCombat) && isStageBossDefeated && !isPartyWiped && !canStartNewGamePlus;
+  const canManuallyGoToPreviousStage = currentStage > 1 && playerParty.members.some((m) => m.isUnlocked && m.isActiveInCombat) && !isPartyWiped && !canStartNewGamePlus;
+  const canForceTick = !isPartyWiped && !canStartNewGamePlus;
+  const getItemSellPrice = useCallback((item) => {
+    const basePrice = {
+      "Common": 15,
+      "Uncommon": 35,
+      "Rare": 80,
+      "Epic": 200
+    }[item.rarity] || 10;
+    const stageMultiplier = Math.max(1, Math.sqrt(currentStage) * 0.3);
+    const randomFactor = 0.85 + Math.random() * 0.3;
+    return Math.floor(basePrice * stageMultiplier * randomFactor);
+  }, [currentStage]);
+  const handleSellItem = useCallback((itemId) => {
+    setPlayerParty((prevParty) => {
+      const itemToSell = prevParty.inventory.find((item) => item.id === itemId);
+      if (!itemToSell) {
+        addLogMessage("\uD310\uB9E4\uD560 \uC544\uC774\uD15C\uC744 \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.", "error");
+        return prevParty;
+      }
+      const sellPrice = getItemSellPrice(itemToSell);
+      const newInventory = prevParty.inventory.filter((item) => item.id !== itemId);
+      addLogMessage(`${itemToSell.name} \uC544\uC774\uD15C\uC744 ${sellPrice} \uACE8\uB4DC\uC5D0 \uD310\uB9E4\uD588\uC2B5\uB2C8\uB2E4.`, "reward");
+      setSelectedInventoryItemId(null);
+      return {
+        ...prevParty,
+        inventory: newInventory,
+        gold: prevParty.gold + sellPrice
+      };
+    });
+  }, [addLogMessage, getItemSellPrice]);
+  return /* @__PURE__ */ jsxs9("div", { className: "min-h-screen bg-slate-900 text-slate-100 p-2 sm:p-4 flex flex-col", children: [
+    /* @__PURE__ */ jsxs9("header", { className: "mb-4 p-3 sm:p-4 bg-slate-800/70 rounded-lg shadow-xl border border-slate-700", children: [
+      /* @__PURE__ */ jsxs9("div", { className: "flex flex-col sm:flex-row justify-between items-center mb-3 sm:mb-4", children: [
+        /* @__PURE__ */ jsx10("h1", { className: "text-2xl sm:text-3xl lg:text-4xl font-bold text-sky-400 tracking-wider mb-2 sm:mb-0", children: "\uBC29\uCE58\uD615 \uBAA8\uD5D8\uAC00 \uB178\uD2B8" }),
+        /* @__PURE__ */ jsxs9("div", { className: "flex items-center space-x-2", children: [
+          /* @__PURE__ */ jsxs9(
+            "button",
+            {
+              onClick: handleForceGameTick,
+              className: "px-3 py-1.5 sm:px-4 sm:py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed",
+              title: "\uAC8C\uC784 \uC9C4\uD589\uC774 \uBA48\uCD98 \uAC83 \uAC19\uC744 \uB54C \uAC15\uC81C\uB85C \uB2E4\uC74C \uD2F1\uC744 \uC2E4\uD589\uD569\uB2C8\uB2E4. \uC8FC\uB85C \uC7AC\uBD80\uD305 \uD6C4 \uBB38\uC81C \uBC1C\uC0DD \uC2DC \uC0AC\uC6A9\uD558\uC138\uC694.",
+              disabled: !canForceTick,
+              children: [
+                /* @__PURE__ */ jsx10(RefreshIcon, { className: "w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" }),
+                " \uAC15\uC81C \uC9C4\uD589"
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxs9("button", { onClick: saveGameState, className: "px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-600 hover:bg-sky-500 text-white text-xs sm:text-sm font-semibold rounded-lg shadow-md transition-colors flex items-center", title: "\uD604\uC7AC \uAC8C\uC784 \uC0C1\uD0DC\uB97C \uC218\uB3D9\uC73C\uB85C \uC800\uC7A5\uD569\uB2C8\uB2E4.", children: [
+            /* @__PURE__ */ jsx10(SaveIcon, { className: "w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" }),
+            " \uAC8C\uC784 \uC800\uC7A5"
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsxs9("div", { className: "text-center space-y-2", children: [
+        /* @__PURE__ */ jsxs9("div", { className: "flex flex-col sm:flex-row justify-center items-center sm:space-x-4 md:space-x-6 space-y-2 sm:space-y-0", children: [
+          /* @__PURE__ */ jsxs9("p", { className: "text-lg sm:text-xl text-slate-300", children: [
+            "\uC2A4\uD14C\uC774\uC9C0: ",
+            /* @__PURE__ */ jsx10("span", { className: "font-semibold text-sky-300", children: currentStage }),
+            playerParty.ngPlusLevel > 0 && /* @__PURE__ */ jsxs9("span", { className: "font-semibold text-yellow-400 ml-1", children: [
+              "(NG+",
+              playerParty.ngPlusLevel,
+              ")"
+            ] })
+          ] }),
+          canStartNewGamePlus ? /* @__PURE__ */ jsxs9("button", { onClick: handleStartNewGamePlus, className: "px-3 py-1.5 sm:px-4 sm:py-2 bg-yellow-500 hover:bg-yellow-400 text-black text-sm sm:text-base font-semibold rounded-lg shadow-md transition-colors flex items-center", children: [
+            "\uB2E4\uC74C \uD68C\uCC28 (NG+",
+            playerParty.ngPlusLevel + 1,
+            ") \uC2DC\uC791 ",
+            /* @__PURE__ */ jsx10(NextStageIcon, { className: "w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" })
+          ] }) : /* @__PURE__ */ jsxs9("div", { className: "flex space-x-2", children: [
+            /* @__PURE__ */ jsxs9("button", { onClick: handlePreviousStage, className: "px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-700 hover:bg-sky-600 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed", title: !canManuallyGoToPreviousStage ? "\uC870\uAC74 \uBBF8\uCDA9\uC871 (\uCCAB \uC2A4\uD14C\uC774\uC9C0, \uD30C\uD2F0\uC6D0 \uC804\uBA78 \uB4F1)" : "\uC774\uC804 \uC2A4\uD14C\uC774\uC9C0\uB85C \uC774\uB3D9", disabled: !canManuallyGoToPreviousStage, children: [
+              /* @__PURE__ */ jsx10(PreviousStageIcon, { className: "w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" }),
+              " \uC774\uC804 \uC2A4\uD14C\uC774\uC9C0"
+            ] }),
+            /* @__PURE__ */ jsxs9("button", { onClick: handleNextStage, className: "px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-500 text-white text-sm sm:text-base font-semibold rounded-lg shadow-md transition-colors flex items-center disabled:bg-slate-500 disabled:cursor-not-allowed", title: !canManuallyProgressToNextStage ? "\uC870\uAC74 \uBBF8\uCDA9\uC871 (\uBCF4\uC2A4 \uBBF8\uCC98\uCE58, \uD30C\uD2F0\uC6D0 \uC804\uBA78 \uB4F1)" : "\uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0\uB85C \uC9C4\uD589", disabled: !canManuallyProgressToNextStage, children: [
+              "\uB2E4\uC74C \uC2A4\uD14C\uC774\uC9C0 ",
+              /* @__PURE__ */ jsx10(NextStageIcon, { className: "w-4 h-4 sm:w-5 sm:h-5 ml-1.5 sm:ml-2" })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs9("div", { className: "flex flex-wrap justify-center items-center gap-2 mt-2", children: [
+          !canStartNewGamePlus && /* @__PURE__ */ jsxs9("button", { onClick: toggleAutoStageProgression, className: `px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium rounded-md transition-colors ${isAutoStageProgressionEnabled ? "bg-sky-600 hover:bg-sky-500 text-white" : "bg-slate-600 hover:bg-slate-500 text-slate-300"}`, children: [
+            "\uC2A4\uD14C\uC774\uC9C0 \uC790\uB3D9 \uC774\uB3D9: ",
+            isAutoStageProgressionEnabled ? "\uCF2C" : "\uB054"
+          ] }),
+          /* @__PURE__ */ jsxs9("button", { onClick: toggleAutoEquip, className: `px-3 py-1 sm:py-1.5 text-xs sm:text-sm font-medium rounded-md transition-colors ${isAutoEquipEnabled ? "bg-teal-600 hover:bg-teal-500 text-white" : "bg-slate-600 hover:bg-slate-500 text-slate-300"}`, children: [
+            "\uC7A5\uBE44 \uC790\uB3D9 \uC7A5\uCC29: ",
+            isAutoEquipEnabled ? "\uCF2C" : "\uB054"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsx10("p", { className: "text-sm sm:text-md text-slate-400 h-5 sm:h-6 flex items-center justify-center", children: getBossStatusMessage() })
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs9("main", { className: "flex-grow grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4", children: [
+      /* @__PURE__ */ jsx10("div", { className: "lg:col-span-1 h-full min-h-[500px] sm:min-h-[600px] lg:min-h-0", children: /* @__PURE__ */ jsx10(CharacterPanel, { playerParty, currentStage, onUpgrade: handleUpgrade, getUpgradeCost, getEffectiveMemberStats, onRecruitMember: handleRecruitMember, isAutoUpgradeEnabled, onToggleAutoUpgrade: toggleAutoUpgrade, floatingTexts, onFloatingTextAnimationComplete: handleFloatingTextAnimationComplete, onOpenEquipmentModal: handleOpenEquipmentModal }) }),
+      /* @__PURE__ */ jsx10("div", { className: "lg:col-span-1 h-full min-h-[350px] sm:min-h-[400px] lg:min-h-0", children: /* @__PURE__ */ jsx10(EnemyPanel, { enemyStats: currentEnemy, floatingTexts, onFloatingTextAnimationComplete: handleFloatingTextAnimationComplete, diceRollDisplay }) }),
+      /* @__PURE__ */ jsx10("div", { className: "lg:col-span-1 h-full min-h-[300px] sm:min-h-[350px] lg:min-h-0", children: /* @__PURE__ */ jsx10(
+        InventoryPanel,
+        {
+          inventory: playerParty.inventory,
+          maxInventorySize: playerParty.MAX_INVENTORY_SIZE,
+          onOpenEquipmentModal: handleOpenEquipmentModal,
+          onSelectItem: handleSelectInventoryItem,
+          selectedInventoryItemId,
+          onSellItem: handleSellItem
+        }
+      ) }),
+      /* @__PURE__ */ jsx10("div", { className: "lg:col-span-1 h-full lg:max-h-[calc(100vh-220px)] min-h-[250px] sm:min-h-[300px] lg:min-h-0", children: /* @__PURE__ */ jsx10(GameLog, { messages: gameLog }) })
+    ] }),
+    /* @__PURE__ */ jsx10(
+      EquipmentModal_default,
+      {
+        isOpen: equipmentModalState.isOpen,
+        onClose: handleCloseEquipmentModal,
+        targetMember: playerParty.members.find((m) => m.id === equipmentModalState.memberId) || null,
+        targetSlot: equipmentModalState.slotType,
+        inventoryItemIdToManage: equipmentModalState.inventoryItemId,
+        inventory: playerParty.inventory,
+        playerParty,
+        onEquipItem: handleEquipItemToMember,
+        onSellItem: handleSellItem,
+        getEffectiveMemberStats
+      }
+    ),
+    /* @__PURE__ */ jsxs9("footer", { className: "text-center text-xs text-slate-500 py-2 mt-auto", children: [
+      /* @__PURE__ */ jsx10("p", { children: "\uD30C\uD2F0\uB97C \uC774\uB04C\uACE0 \uACC4\uC18D\uD574\uC11C \uAC15\uD654\uD558\uC138\uC694! \uC8FC\uC0AC\uC704 \uC2E0\uC758 \uAC00\uD638\uAC00 \uD568\uAED8\uD558\uAE38!" }),
+      playerParty.ngPlusLevel > 0 && /* @__PURE__ */ jsxs9("p", { className: "font-semibold text-yellow-500", children: [
+        "\uD604\uC7AC NG+",
+        playerParty.ngPlusLevel,
+        " \uC9C4\uD589 \uC911"
+      ] })
+    ] })
+  ] });
+};
+var App_default = App;
+
+// index.tsx
+import { jsx as jsx11 } from "react/jsx-runtime";
+var rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Could not find root element to mount to");
+}
+var root = ReactDOM.createRoot(rootElement);
+root.render(
+  /* @__PURE__ */ jsx11(React6.StrictMode, { children: /* @__PURE__ */ jsx11(App_default, {}) })
+);
+
+  </script>
 </body>
 </html>
-<link rel="stylesheet" href="index.css">
-<script src="index.tsx" type="module"></script>

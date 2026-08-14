@@ -4,31 +4,32 @@
   "description": "D&D 스타일의 주사위 기반 전투 시스템을 가진 방치형 RPG 게임",
   "icons": [
     {
-      "src": "/favicon-16x16.svg",
+      "src": "/Idle_RPG/favicon-16x16.svg",
       "sizes": "16x16",
       "type": "image/svg+xml"
     },
     {
-      "src": "/favicon-32x32.svg",
+      "src": "/Idle_RPG/favicon-32x32.svg",
       "sizes": "32x32",
       "type": "image/svg+xml"
     },
     {
-      "src": "/favicon.svg",
+      "src": "/Idle_RPG/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     },
     {
-      "src": "/apple-touch-icon.svg",
+      "src": "/Idle_RPG/apple-touch-icon.svg",
       "sizes": "180x180",
       "type": "image/svg+xml"
     }
   ],
-  "start_url": "/",
+  "start_url": "/Idle_RPG/",
+  "scope": "/Idle_RPG/",
   "display": "standalone",
   "theme_color": "#1e293b",
   "background_color": "#0f172a",
   "orientation": "portrait-primary",
   "categories": ["games", "entertainment"],
   "lang": "ko"
-} 
+}

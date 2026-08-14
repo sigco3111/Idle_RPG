@@ -2,7 +2,11 @@
 
 "방치형 모험가 노트"는 플레이어가 파티를 구성하고 관리하며 자동으로 전투를 진행하는 방치형 RPG 게임입니다. D&D (Dungeons & Dragons) 스타일의 주사위 기반 전투 시스템, 다양한 장비 획득 및 장착, 그리고 끝없는 도전을 제공하는 다회차(New Game Plus) 요소가 특징입니다.
 
-실행 주소 : https://dev-canvas-pi.vercel.app/
+라이브 데모 : https://sigco3111.github.io/Idle_RPG/
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-222222?style=for-the-badge&logo=githubpages)](https://sigco3111.github.io/Idle_RPG/)
+
+> **참고**: AI 콘텐츠 생성은 Google Gemini API 키가 필요합니다 (`process.env.GEMINI_API_KEY`). 키가 없으면 AI 기능은 비활성화되며, 파티 관리/D&D 전투/장비 획득/PWA 설치 등 핵심 기능은 정상 작동합니다.
 
 ## 📋 목차
 
@@ -112,7 +116,14 @@ npm run build
 
 # 빌드 결과 미리보기
 npm run preview
+
+# gh-pages 브랜치에 배포 (Pages 서브경로 호스팅)
+npx gh-pages -d dist
 ```
+
+> 이 저장소는 GitHub Actions 또는 수동 gh-pages 브랜치 푸시로 배포됩니다. `vite.config.ts`에 `base: '/Idle_RPG/'`가 박혀 있어 빌드 결과가 gh-pages 서브경로에서 정상 작동합니다.
+
+> **PWA 주의**: `site.webmanifest`의 `start_url: '/'` + icon 절대경로는 gh-pages 서브경로 호스팅에서 PWA 설치 후 경로가 어긋날 수 있습니다. 핵심 게임 플레이는 영향 없습니다 (favicon은 index.html의 `<link rel="icon">`이 직접 처리).
 
 ## 📁 프로젝트 구조
 
