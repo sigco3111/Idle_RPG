@@ -2,14 +2,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>방치형 모험가 노트</title>
+  <link rel="icon" type="image/svg+xml" href="/Idle_RPG/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" sizes="16x16" href="/Idle_RPG/favicon-16x16.svg" />
+  <link rel="icon" type="image/svg+xml" sizes="32x32" href="/Idle_RPG/favicon-32x32.svg" />
+  <link rel="apple-touch-icon" href="/Idle_RPG/apple-touch-icon.svg" />
+  <link rel="manifest" href="/Idle_RPG/site.webmanifest" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: 'Inter', sans-serif; 
-      overflow-x: hidden; 
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #2d3748; }
@@ -21,10 +26,10 @@
 
     .floating-text-effect { position: absolute; animation: floatAndFade 1.5s ease-out forwards; font-weight: bold; padding: 3px 8px; border-radius: 6px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); pointer-events: none; white-space: nowrap; font-size: 0.9rem; }
     @keyframes floatAndFade { 0% { transform: translateY(0) scale(0.8); opacity: 1; } 20% { transform: translateY(-10px) scale(1); opacity: 1; } 100% { transform: translateY(-70px) scale(1.1); opacity: 0; } }
-    .floating-text-damage { color: white; background-color: rgba(220, 38, 38, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
-    .floating-text-crit { color: black; background-color: rgba(250, 204, 21, 0.85); border: 1px solid rgba(255,255,255,0.5); } 
-    .floating-text-miss { color: white; background-color: rgba(100, 116, 139, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
-    .floating-text-heal { color: white; background-color: rgba(22, 163, 74, 0.7); border: 1px solid rgba(255,255,255,0.3); } 
+    .floating-text-damage { color: white; background-color: rgba(220, 38, 38, 0.7); border: 1px solid rgba(255,255,255,0.3); }
+    .floating-text-crit { color: black; background-color: rgba(250, 204, 21, 0.85); border: 1px solid rgba(255,255,255,0.5); }
+    .floating-text-miss { color: white; background-color: rgba(100, 116, 139, 0.7); border: 1px solid rgba(255,255,255,0.3); }
+    .floating-text-heal { color: white; background-color: rgba(22, 163, 74, 0.7); border: 1px solid rgba(255,255,255,0.3); }
     .floating-text-ko { color: white; background-color: rgba(75,85,99,0.8); font-weight: bold; padding: 5px 10px; font-size:1rem;}
 
     /* Equipment Modal Styles */
@@ -66,12 +71,10 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-8ec20940.js"></script>
+  <script type="module" crossorigin src="/Idle_RPG/assets/index-aee6906c.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100">
   <div id="root"></div>
   
 </body>
 </html>
-<link rel="stylesheet" href="index.css">
-
